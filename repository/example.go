@@ -10,7 +10,7 @@ type ExampleRepository struct {
 	db *gorm.DB
 }
 
-func NewTestRepository(db *gorm.DB) *ExampleRepository {
+func NewExampleRepository(db *gorm.DB) *ExampleRepository {
 	return &ExampleRepository{db: db}
 }
 

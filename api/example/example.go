@@ -9,14 +9,12 @@ type ExampleHandler struct {
 	repo *repository.ExampleRepository
 }
 
-func NewTestHandler(repo *repository.ExampleRepository) *ExampleHandler {
+func NewExampleHandler(repo *repository.ExampleRepository) *ExampleHandler {
 	return &ExampleHandler{repo: repo}
 }
 
-func SetupRouter(router *gin.Engine, handler *ExampleHandler) *gin.Engine {
+func SetupRouter(router *gin.Engine, handler *ExampleHandler) {
 	router.GET("/example", handler.Index)
-
-	return router
 }
 
 func (h *ExampleHandler) Index(c *gin.Context) {

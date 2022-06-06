@@ -29,8 +29,8 @@ func main() {
 	route := gin.Default()
 
 	// example
-	exampleRepository := repository.NewTestRepository(db)
-	example.SetupRouter(route, example.NewTestHandler(exampleRepository))
+	exampleRepository := repository.NewExampleRepository(db)
+	example.SetupRouter(route, example.NewExampleHandler(exampleRepository))
 
 	// run
 	err = route.Run(constant.BaseUrl)
