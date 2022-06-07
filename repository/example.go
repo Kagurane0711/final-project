@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"github.com/rg-km/final-project-engineering-9/model"
+	. "github.com/rg-km/final-project-engineering-9/model"
 	"gorm.io/gorm"
 )
 
@@ -15,7 +15,7 @@ func NewExampleRepository(db *gorm.DB) *ExampleRepository {
 }
 
 func (r *ExampleRepository) Test() {
-	hello := &model.Example{Message: "hello"}
+	hello := &Example{Message: "hello"}
 
 	r.db.Create(&hello)
 
@@ -23,9 +23,17 @@ func (r *ExampleRepository) Test() {
 }
 
 func (r *ExampleRepository) Print() {
-	rows := make([]model.Example, 0)
+	rows := make([]Example, 0)
 
 	r.db.Find(&rows)
 
 	fmt.Println(rows)
+}
+
+func (r *ExampleRepository) FetchAll() (rows *[]Example, err error) {
+	r.db.Find(&rows)
+
+	fmt.Println(rows)
+
+	return
 }
