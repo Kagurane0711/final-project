@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "../components/navbar.js";
+import Footer from "../components/footer.js";
 
 const Category = () => (
   <div>
@@ -11,6 +12,7 @@ const Category = () => (
         Kategori
       </a>
     </div>
+    <Footer className="h-10"/>
   </div>
 );
 

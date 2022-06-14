@@ -8,11 +8,6 @@ const Preview = () => (
     <div className="fixed w-full">
       <Navbar />
     </div>
-    {/* <div className="flex justify-center ">
-      <a href="#" className="text-xl text-slate-500 font-sans my-6">
-        Preview
-      </a>
-    </div> */}
     <div className="grid place-items-center">
       <div className="grid grid-rows-6 grid-flow-col gap-8 h-[550px] w-[900px] mt-[130px]">
         <div className="row-span-4 border">
@@ -21,14 +16,16 @@ const Preview = () => (
             className="h-full m-auto"
           />
         </div>
-        <div className="row-span-1 py-5 border">
-          <p>Konosuba Vol. 17</p>
+        <div className="row-span-1">
+          <p className="text-md font-medium">Konosuba Vol. 17</p>
         </div>
-        <div className="row-span-1 py-5 border">
+        <div className="flex row-span-1 justify-center pt-2.5">
           <Link to="/reader">
-            <p className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">
-              Baca
-            </p>
+            <button className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
+              <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                Baca buku
+              </span>
+            </button>
           </Link>
         </div>
         <div className="relative row-span-1 col-span-2 p-5 border">

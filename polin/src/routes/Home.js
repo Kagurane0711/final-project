@@ -1,12 +1,30 @@
 import React from "react";
 import "../styles/home.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/navbar.js";
 import Books from "../components/books.js";
+import Footer from "../components/footer.js";
+import InfiniteScroll from "react-infinite-scroll-component";
+import axios from "axios"
 
 const Home = () => {
-  const [isLogin, setLogin] = useState(false);
+  const [isLogin, setLogin] = useState(true);
+
+  const [items, setItems] = useState([])
+
+  const fetchData = () => {
+    try {
+      // const data = await axios.get()
+      // setItems(data.data)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return (
     <div>
@@ -24,6 +42,10 @@ const Home = () => {
           className="grid grid-cols-2 gap-4 px-5 md:grid-cols-3 md:gap-4 
         lg:grid-cols-3 lg:gap-6 lg:mx-[50px] xl:grid-cols-4 xl:mx-[110px] 2xl:mx-[125px]"
         >
+          {/* <Books 
+            key={index}
+
+          /> */}
           <Books />
           <Books />
           <Books />
@@ -36,6 +58,19 @@ const Home = () => {
           <Books />
           <Books />
           <Books />
+          <InfiniteScroll
+            dataLength={items.length} //This is important field to render the
+            next={fetchData}
+            hasMore={true}
+            loader={<h4>Loading...</h4>}
+            endMessage=
+            {
+              <p style={{ textAlign: "center" }}>
+                <b>Yay! You have seen it all</b>
+              </p>
+            }
+            >{items}
+          </InfiniteScroll>
         </div>
         {!isLogin && (
           <div className="flex justify-center ">
@@ -48,12 +83,13 @@ const Home = () => {
         )}
         {isLogin && (
           <div className="flex justify-center ">
-            <p href="#" className="text-xl text-slate-500 font-sans my-6">
+            {/* <p href="#" className="text-xl text-slate-500 font-sans my-6">
               Lihat selengkapnya
-            </p>
+            </p> */}
           </div>
         )}
       </div>
+      <Footer/>
     </div>
   );
 };
