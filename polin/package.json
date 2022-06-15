@@ -11,8 +11,14 @@
     "@testing-library/user-event": "^13.5.0",
     "heroicons-react": "^1.4.1",
     "react": "^18.1.0",
+    "react-axios": "^2.0.6",
     "react-dom": "^18.1.0",
+<<<<<<< HEAD
+    "react-infinite-scroll-component": "^6.1.0",
+    "react-pdf": "^5.7.2",
+=======
     "react-icons": "^4.4.0",
+>>>>>>> 0c840acdf06b95d82b4c4f6e939d4b42811a38ea
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
