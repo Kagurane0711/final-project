@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../components/navbar.js";
 // import Books from "../components/books.js";
 import { Link } from "react-router-dom";
 
-const Preview = () => (
+const Preview = () => {
+
+  const [detail, setDetail] = useState(null)
+
+  return (
   <div>
     <div className="fixed w-full">
       <Navbar />
@@ -59,6 +63,7 @@ const Preview = () => (
       </div>
     </div>
   </div>
-);
+  )
+};
 
 export default Preview;

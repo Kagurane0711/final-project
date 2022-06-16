@@ -9,9 +9,10 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios"
 
 const Home = () => {
-  const [isLogin, setLogin] = useState(true);
+  const [isLogin, setLogin] = useState(false);
 
   const [items, setItems] = useState([])
+  const [hasMore, setHasMore] = useState(false)
 
   const fetchData = () => {
     try {
@@ -42,10 +43,18 @@ const Home = () => {
           className="grid grid-cols-2 gap-4 px-5 md:grid-cols-3 md:gap-4 
         lg:grid-cols-3 lg:gap-6 lg:mx-[50px] xl:grid-cols-4 xl:mx-[110px] 2xl:mx-[125px]"
         >
-          {/* <Books 
-            key={index}
-
-          /> */}
+          {/* {dataDummy.map((element, index) => {
+              return (
+                <Books 
+                key={index} 
+                id={element.id}
+                cover={element.cover}
+                title={element.title}
+                category={element.category}
+                author={element.author}
+                />
+              )
+            })} */}
           <Books />
           <Books />
           <Books />
@@ -59,7 +68,7 @@ const Home = () => {
           <Books />
           <Books />
           <InfiniteScroll
-            dataLength={items.length} //This is important field to render the
+            dataLength={items.length} //This is important fielementd to render the
             next={fetchData}
             hasMore={true}
             loader={<h4>Loading...</h4>}
@@ -69,14 +78,26 @@ const Home = () => {
                 <b>Yay! You have seen it all</b>
               </p>
             }
-            >{items}
+            >
+              {/* {dataDummy.map((element, index) => {
+              // return (
+              //   <Books 
+              //   key={index} 
+              //   id={element.id}
+              //   cover={element.cover}
+              //   title={element.title}
+              //   category={element.category}
+              //   author={element.author}
+              //   />
+              // )
+            })} */}
           </InfiniteScroll>
         </div>
         {!isLogin && (
           <div className="flex justify-center ">
             <Link to="/login">
               <p className="text-xl text-slate-500 font-sans my-6">
-                Masuk untuk melihat lebih banyak
+                Masuk untuk melementihat lebih banyak
               </p>
             </Link>
           </div>
@@ -84,7 +105,7 @@ const Home = () => {
         {isLogin && (
           <div className="flex justify-center ">
             {/* <p href="#" className="text-xl text-slate-500 font-sans my-6">
-              Lihat selengkapnya
+              Lihat selementengkapnya
             </p> */}
           </div>
         )}

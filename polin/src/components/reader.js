@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import {useState} from "react"
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack'
+import { bookmarkPlugin } from '@react-pdf-viewer/bookmark'
 
 
 export default function Reader() {
