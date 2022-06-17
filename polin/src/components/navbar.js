@@ -8,7 +8,7 @@ import axios from "axios"
 import { Popover, Transition } from "@headlessui/react";
 
 export default function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const [query, setQuery] = useState('')
 
@@ -21,22 +21,21 @@ export default function Navbar() {
   //     setLogin(true);
   //   }
   // }
-  useEffect(() => {
-    handleTokenFromQueryParams();
-  }, []);
+  
 
-  const createGoogleAuthLink = async () => {
-    try {
-      const request = await fetch("http://localhost:8080/auth/google", {
-        method: "GET",
-      });
-      const response = await request.json();
-      window.location.href = response.url;
-    } catch (error) {
-      console.log("App.js 12 | error", error);
-      throw new Error("Issue with Login", error.message);
-    }
-  };
+  // const createGoogleAuthLink = async () => {
+  //   try {
+  //     // const request = await fetch("http://localhost:8080/auth/google", {
+  //     //   method: "GET",
+  //     // });
+  //     const request = await axios.get("http://localhost:8080/auth/google")
+  //     // const response = await request.json();
+  //     window.location.href = response.url;
+  //   } catch (error) {
+  //     console.log("App.js 12 | error", error);
+  //     throw new Error("Issue with Login", error.message);
+  //   }
+  // };
 
   const handleTokenFromQueryParams = () => {
     const query = new URLSearchParams(window.location.search);
@@ -70,6 +69,10 @@ export default function Navbar() {
   // useEffect (() => {
   //   getUser()
   // })
+
+  useEffect(() => {
+    // handleTokenFromQueryParams();
+  }, []);
 
   return (
     <Popover className="relative bg-white">
@@ -119,7 +122,10 @@ export default function Navbar() {
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
              
                 <button 
-                onClick={createGoogleAuthLink}
+                // onClick={window.location.href = `http://localhost:8080/auth/google?redirect=http://localhost:3000/auth/success`}
+                // baca 2 access & refresh token dari query params
+                // href="http://localhost:8080/auth/google"
+                
                 className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gray-500 hover:bg-blue-600">
                   Masuk dengan{" "}
                   <img
@@ -128,7 +134,7 @@ export default function Navbar() {
                     className="w-[23px] ml-2"
                   />
                 </button>
-              
+                
             </div>
           )}
           {isLoggedIn && (

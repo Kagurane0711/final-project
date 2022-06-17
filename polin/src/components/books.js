@@ -4,10 +4,10 @@ import Preview from "../routes/modal_preview";
 
 export default function Books({ id, cover, title, category, author }) {
   return (
-    <div className="max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+    <div className="max-w-[280px] bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
       <Link to={`/preview/${id}`}>
         <img
-          className="rounded-t-lg h-[375px] w-full"
+          className="rounded-t-lg h-[375px] w-[285px]"
           // src="https://cgtranslations321782266.files.wordpress.com/2020/07/p1alt2en.png"
           src={cover}
           alt=""

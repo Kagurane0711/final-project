@@ -8,8 +8,8 @@ const Upload = () => (
     <div className="fixed w-full">
       <Navbar />
     </div>
-    <div class="flex flex-col h-screen justify-between">
-      <main class="mb-auto mt-[100px] h-10">
+    <div className="flex flex-col h-screen justify-between">
+      <main className="mb-auto mt-[100px] h-10">
         <div className="mt-10 sm:mt-0">
         <div className="flex justify-center ">
       <a href="#" className="text-xl text-slate-600 font-sans my-6">
