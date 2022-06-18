@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/home.css";
 import { useState, useEffect } from "react";
+import useBookStore from "../store/BookStore.js"
 import { Link } from "react-router-dom";
 import Navbar from "../components/navbar.js";
 import Books from "../components/books.js";
@@ -10,7 +11,7 @@ import axios from "axios";
 
 const Home = () => {
   const [isLogin, setLogin] = useState(true);
-
+  const books = useBookStore((state) => state.books)
   const [items, setItems] = useState([]);
   const [hasMore, setHasMore] = useState(false);
 
@@ -54,51 +55,23 @@ const Home = () => {
               className="grid grid-cols-2 gap-4 px-5 md:grid-cols-2 md:gap-4 
               lg:grid-cols-3 lg:gap-6 xl:grid-cols-4"
             >
-              {dataDummy.map((element, index) => {
+              {books.map((element, index) => {
                 return (
+                  // <Link key={index} to={`/preview/${element.id}`}>
                   <Books
-                    key={index}
+                    // key={index}
                     id={element.id}
                     cover={element.cover}
                     title={element.title}
                     category={element.category}
                     author={element.author}
                   />
+                  // </Link>
                 );
               })}
             </div>
           </div>
         </InfiniteScroll>
-        {/* <div
-          className="grid grid-cols-2 gap-4 px-5 md:grid-cols-3 md:gap-4 
-        lg:grid-cols-3 lg:gap-6 lg:mx-[50px] xl:grid-cols-4 xl:mx-[110px] 2xl:mx-[125px]"
-        > */}
-        {/* {dataDummy.map((element, index) => {
-            return (
-              <Books
-                key={index}
-                id={element.id}
-                cover={element.cover}
-                title={element.title}
-                category={element.category}
-                author={element.author}
-              />
-            );
-          })} */}
-        {/* <Books />
-          <Books />
-          <Books />
-          <Books />
-          <Books />
-          <Books />
-          <Books />
-          <Books />
-          <Books />
-          <Books />
-          <Books />
-          <Books /> */}
-
-        {/* </div> */}
         {!isLogin && (
           <div className="flex justify-center ">
             <Link to="/login">
