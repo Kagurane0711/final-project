@@ -96,11 +96,6 @@ export default function Navbar() {
                 <p className="text-center text-slate-500">Penulis</p>
               </Link>
             </div>
-            {/* <div className="w-20 py-2 ">
-              <Link to="/Kategori">
-                <p className="text-center text-slate-500">Penerbit</p>
-              </Link>
-            </div> */}
           </div>
 
           <div className="flex justify-center">
@@ -123,6 +118,7 @@ export default function Navbar() {
              
                 <button 
                 // onClick={window.location.href = `http://localhost:8080/auth/google?redirect=http://localhost:3000/auth/success`}
+                onClick={window.location.href = `http://localhost:8080/auth/google`}
                 // baca 2 access & refresh token dari query params
                 // href="http://localhost:8080/auth/google"
                 

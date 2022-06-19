@@ -7,13 +7,13 @@ import Login from "./routes/Login";
 import Preview from "./routes/modal_preview";
 import Reader from "./routes/Reader";
 import Upload from "./routes/Upload";
+import Update from "./routes/UpdateBook";
 import "./App.css";
 
 const App = () => {
   return (
     <>
       <Routes>
-        <Route path="login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/kategori" element={<Kategori />} />
@@ -25,6 +25,7 @@ const App = () => {
           <Route path=":id" element={<Reader />} />
         </Route>
         <Route path="/upload" element={<Upload />} />
+        <Route path="/update" element={<Update />} />
       </Routes>
     </>
   );
