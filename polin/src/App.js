@@ -15,9 +15,13 @@ const App = () => {
     <>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={() =>{
+          window.location.href = "http://localhost:8080/auth/google"
+          // return null;
+        }} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/kategori" element={<Kategori />} />
-        <Route path="/login" element={<Login />} />
+        
         <Route path="/preview" element={<Preview />}>
           <Route path=":id" element={<Preview />} />
         </Route>

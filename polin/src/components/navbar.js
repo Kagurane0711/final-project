@@ -4,32 +4,30 @@ import { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import logoGoogle from "../assets/google-logo.png";
 import { Link } from "react-router-dom";
-import axios from "axios"
+import axios from "axios";
 import { Popover, Transition } from "@headlessui/react";
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState("");
 
   function handleSearch(e) {
-    setQuery(e.target.value)
+    setQuery(e.target.value);
   }
-  // const getUser = async () => {
-  //   const user = await axios.get("/http://localhost:8080/auth/google")
-  //   if (user) {
-  //     setLogin(true);
-  //   }
-  // }
-  
+
+  useEffect(() => {
+    handleTokenFromQueryParams();
+  }, []);
+
 
   // const createGoogleAuthLink = async () => {
   //   try {
-  //     // const request = await fetch("http://localhost:8080/auth/google", {
-  //     //   method: "GET",
-  //     // });
-  //     const request = await axios.get("http://localhost:8080/auth/google")
-  //     // const response = await request.json();
+  //     const request = await fetch("http://localhost:8080/auth/google", {
+  //       method: "GET",
+  //     });
+  //     // const request = await axios.get("http://localhost:8080/auth/google")
+  //     const response = await request.json();
   //     window.location.href = response.url;
   //   } catch (error) {
   //     console.log("App.js 12 | error", error);
@@ -39,8 +37,9 @@ export default function Navbar() {
 
   const handleTokenFromQueryParams = () => {
     const query = new URLSearchParams(window.location.search);
-    const accessToken = query.get("accessToken");
-    const refreshToken = query.get("refreshToken");
+    const accessToken = query.get("access_token");
+    const refreshToken = query.get("refresh_token");
+    console.log(accessToken, refreshToken)
     const expirationDate = newExpirationDate();
     console.log("App.js 30 | expiration Date", expirationDate);
     if (accessToken && refreshToken) {
@@ -65,14 +64,6 @@ export default function Navbar() {
     setIsLoggedIn(false);
     sessionStorage.clear();
   };
-
-  // useEffect (() => {
-  //   getUser()
-  // })
-
-  useEffect(() => {
-    // handleTokenFromQueryParams();
-  }, []);
 
   return (
     <Popover className="relative bg-white">
@@ -115,14 +106,13 @@ export default function Navbar() {
           </div>
           {!isLoggedIn && (
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-             
-                <button 
-                // onClick={window.location.href = `http://localhost:8080/auth/google?redirect=http://localhost:3000/auth/success`}
-                onClick={window.location.href = `http://localhost:8080/auth/google`}
-                // baca 2 access & refresh token dari query params
-                // href="http://localhost:8080/auth/google"
-                
-                className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gray-500 hover:bg-blue-600">
+              <a href="http://localhost:8080/auth/google?redirect=http://localhost:3000/">
+                <button
+                  // onClick={window.location.href = `http://localhost:8080/auth/google?redirect=http://localhost:3000/auth/success`}   
+                  // baca 2 access & refresh token dari query params
+
+                  className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gray-500 hover:bg-blue-600"
+                >
                   Masuk dengan{" "}
                   <img
                     src={logoGoogle}
@@ -130,7 +120,7 @@ export default function Navbar() {
                     className="w-[23px] ml-2"
                   />
                 </button>
-                
+              </a>
             </div>
           )}
           {isLoggedIn && (
@@ -144,9 +134,6 @@ export default function Navbar() {
                     className="w-[23px] ml-2"
                   />
                 </span>
-                {/* <p className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">
-                  Profile
-                </p> */}
               </Link>
             </div>
           )}

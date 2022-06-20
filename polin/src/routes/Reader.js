@@ -13,6 +13,18 @@ export default function Reader() {
     setPageNumber(pageNumber);
   }
 
+  function changePage(offSet) {
+    setPageNumber(prevPageNumber => prevPageNumber + offSet);
+  }
+
+  function changePageBack() {
+   changePage(-1);
+  }
+
+  function changePageNext() {
+    changePage(+1);
+  }
+
   return (
     <center>
       <div>
@@ -22,9 +34,20 @@ export default function Reader() {
         <main className="relative">
           <div className="">
             <Document file="/sample.pdf" onLoadSuccess={onDocummentLoadSuccess}>
-              {Array.from(new Array(numPages), (el, index) => (
-                <Page key={`page_${index + 1}`} pageNumber={index + 1} />
-              ))}
+              {/* {Array.from(new Array(numPages), (el, index) => ( */}
+                <Page height={600} pageNumber={pageNumber}>
+                  {console.log(pageNumber)}
+                </Page>
+                <p>Page {pageNumber} of {numPages}</p>
+                {pageNumber > 1 &&
+                <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l" onClick={changePageBack}>Sebelumnya</button>
+                }
+                {
+                  pageNumber < numPages &&
+                  <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r" onClick={changePageNext}>Selanjutnya</button>
+                }
+              {/* ))} */}
+              
             </Document>
           </div>
         </main>
