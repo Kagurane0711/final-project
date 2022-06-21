@@ -12,7 +12,7 @@ const Upload = () => (
       <main className="mb-auto mt-[100px] h-10">
         <div className="mt-10 sm:mt-0">
         <div className="flex justify-center ">
-      <a href="#" className="text-xl text-slate-600 font-sans my-6">
+      <a href="#" className="text-xl text-slate-600 font-sans my-4">
         Upload Buku
       </a>
     </div>
@@ -21,8 +21,8 @@ const Upload = () => (
               <form action="#" method="POST">
                 <div className="shadow overflow-hidden sm:rounded-md">
                   <div className="px-4 py-5 bg-gray-300 sm:p-6">
-                    <div className="grid grid-cols-2 gap-6 h-[300px] w-[500px]">
-                      <div className="col-span-2 ">
+                    <div className="grid grid-cols-2 gap-6 h-[370px] w-[500px]">
+                      <div className="col-span-1 ">
                         <label
                           htmlFor="judul"
                           className="block text-sm font-medium text-gray-700"
@@ -37,7 +37,7 @@ const Upload = () => (
                           className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         />
                       </div>
-                      <div className="col-span-2 ">
+                      <div className="col-span-1 ">
                         <label
                           htmlFor="penulis"
                           className="block text-sm font-medium text-gray-700"
@@ -52,7 +52,22 @@ const Upload = () => (
                           className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         />
                       </div>
-                      <div className="col-span-2 ">
+                      <div className="col-span-1 ">
+                        <label
+                          htmlFor="penulis"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Tahun terbit
+                        </label>
+                        <input
+                          type="text"
+                          name="tahunTerbit"
+                          id="tahunTerbit"
+                          autoComplete="Tahun Terbit"
+                          className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                        />
+                      </div>
+                      <div className="col-span-1 ">
                         <label
                           htmlFor="kategori"
                           className="block text-sm font-medium text-gray-700"
@@ -63,11 +78,39 @@ const Upload = () => (
                           type="text"
                           name="kategori"
                           id="kategori"
-                          autoComplete="email"
+                          autoComplete="Kategori"
                           className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         />
                       </div>
-
+                      <div className="col-span-2 ">
+                        <label
+                          htmlFor="kategori"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Sinopsis
+                        </label>
+                        <input
+                          type="text"
+                          name="sinopsis"
+                          id="sinopsis"
+                          autoComplete="sinopsis"
+                          className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <label
+                          htmlFor="buku"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Cover
+                        </label>
+                        <input
+                          type="file"
+                          name="cover"
+                          id="cover"
+                          className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                        />
+                      </div>
                       <div className="col-span-2">
                         <label
                           htmlFor="buku"

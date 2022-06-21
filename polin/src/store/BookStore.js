@@ -6,7 +6,7 @@ const useBookStore = create((set) => ({
   books: [],
   fetchBook: async (url) => {
     const response = await axios.get(url);
-    // console.log(response, "response");
+    console.log("response", response);
     set({ books: await response.data });
   },
   addBooks: (book) =>

@@ -30,10 +30,11 @@ const Home = () => {
 
   useEffect(() => {
     fetchBook("http://localhost:8080/books")
+    fetchUser("http://localhost:8080/user/profile")
     
   }, []);
 
-  console.log()
+  console.log("user", user)
 
   return (
     <div>
@@ -58,9 +59,9 @@ const Home = () => {
                 <Books
                   key={index}
                   id={element.id}
-                  cover={element.cover}
+                  cover={element.cover_url}
                   title={element.title}
-                  category={element.category}
+                  category={element.categories}
                   author={element.author}
                 />
               );

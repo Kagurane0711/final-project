@@ -3,14 +3,14 @@ import Navbar from "../components/navbar.js";
 import Footer from "../components/footer.js";
 
 const Category = () => (
-  <div class="flex flex-col h-screen justify-between">
-    <header class="h-10 bg-red-500">
+  <div className="flex flex-col h-screen justify-between">
+    <header className="h-10 bg-red-500">
       <Navbar />
     </header>
-    <main class="mb-auto h-10 bg-green-500">
+    <main className="mb-auto h-10 bg-green-500">
       
     </main>
-    <footer class="h-10 bg-blue-500">
+    <footer className="h-10 bg-blue-500">
       <Footer />
     </footer>
   </div>

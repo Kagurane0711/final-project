@@ -3,12 +3,13 @@ import { Fragment } from "react";
 import { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import logoGoogle from "../assets/google-logo.png";
+import SearchBar from "./search.js"
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Popover, Transition } from "@headlessui/react";
 
 export default function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [query, setQuery] = useState("");
 
@@ -90,7 +91,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex justify-center">
-            <div className="mb-0 xl:w-96">
+            {/* <div className="mb-0 xl:w-96">
               <input
                 type="search"
                 className="
@@ -102,7 +103,8 @@ export default function Navbar() {
                 onChange={handleSearch}
                 placeholder="Cari"
               />
-            </div>
+            </div> */}
+            <SearchBar></SearchBar>
           </div>
           {!isLoggedIn && (
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
