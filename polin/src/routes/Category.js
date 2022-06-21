@@ -3,16 +3,16 @@ import Navbar from "../components/navbar.js";
 import Footer from "../components/footer.js";
 
 const Category = () => (
-  <div>
-    <div className="fixed w-full">
+  <div class="flex flex-col h-screen justify-between">
+    <header class="h-10 bg-red-500">
       <Navbar />
-    </div>
-    <div className="flex justify-center ">
-      <a href="#" className="text-xl text-slate-500 font-sans my-6">
-        Kategori
-      </a>
-    </div>
-    <Footer className="h-10"/>
+    </header>
+    <main class="mb-auto h-10 bg-green-500">
+      
+    </main>
+    <footer class="h-10 bg-blue-500">
+      <Footer />
+    </footer>
   </div>
 );
 
