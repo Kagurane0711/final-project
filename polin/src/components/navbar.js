@@ -8,7 +8,7 @@ import axios from "axios";
 import { Popover, Transition } from "@headlessui/react";
 
 export default function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [query, setQuery] = useState("");
 
