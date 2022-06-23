@@ -8,7 +8,7 @@ import useUsers from "../store/users.js";
 const Profile = () => {
   const { user, fetchUser } = useUsers((state) => state);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [isAdmin, setAdmin] = useState(false);
+  const [isAdmin, setAdmin] = useState(true);
 
   const signOut = () => {
     setIsLoggedIn(false);

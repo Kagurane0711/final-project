@@ -6,7 +6,7 @@ import { bookmarkPlugin } from '@react-pdf-viewer/bookmark'
 
 export default function Reader() {
   const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
+  const [pageNumber, setPageNumber] = useState(3);
 
   function onDocummentLoadSuccess({ numPages }) {
     setNumPages(numPages);
@@ -33,9 +33,9 @@ export default function Reader() {
         </header>
         <main className="relative">
           <div className="">
-            <Document file="/sample.pdf" onLoadSuccess={onDocummentLoadSuccess}>
+            <Document file="/sample.pdf" pageNumber={pageNumber} onLoadSuccess={onDocummentLoadSuccess}>
               {/* {Array.from(new Array(numPages), (el, index) => ( */}
-                <Page height={600} pageNumber={pageNumber}>
+                <Page height={600} >
                   {console.log(pageNumber)}
                 </Page>
                 <p>Page {pageNumber} of {numPages}</p>

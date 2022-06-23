@@ -7,7 +7,7 @@ import useBookStore from "../store/BookStore.js";
 
 const Preview = () => {
   const { id } = useParams();
-  const { books } = useBookStore((state) => state.books);
+  const  books  = useBookStore((state) => state.books);
 
   return (
     <div>
@@ -28,7 +28,7 @@ const Preview = () => {
                 Favorit
               </span>
             </button>
-            <Link to={`/reader${id}`}>
+            <Link to={`/reader/${id}`}>
               <button className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
                 <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
                   Baca buku
@@ -50,7 +50,7 @@ const Preview = () => {
           </div>
           <div className="row-span-3 col-span-2 p-3 border">
             <p>
-              {/* Now Kazuma is grumbling that he's being treated the same as usual
+              Now Kazuma is grumbling that he's being treated the same as usual
               by the girls despite him being the hero who saved the world. He
               said he was too soft on the girls and they let it get to their
               heads. As he's heading out he starts stretching in preparation to
@@ -61,7 +61,7 @@ const Preview = () => {
               properly in return for his astronomical achievement (defeating the
               Demon King despite his terrible class, stats and his dysfunctional
               party), asked him to wait. She wished him fortune and gave him her
-              sincere prayer from the bottom of her heart ("Blessing!"). */}
+              sincere prayer from the bottom of her heart ("Blessing!").
               {books[id - 1].summary}
             </p>
           </div>

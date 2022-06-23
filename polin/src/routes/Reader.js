@@ -8,7 +8,7 @@ import useBookStore from "../store/BookStore.js";
 export default function Reader() {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
-  const { id } = useParams();
+  // const { id } = useParams();
   const { books } = useBookStore((state) => state.books);
 
   function onDocummentLoadSuccess({ numPages }) {
@@ -38,8 +38,9 @@ export default function Reader() {
           <div className="">
             <Document file="/sample.pdf" onLoadSuccess={onDocummentLoadSuccess}>
               {/* {Array.from(new Array(numPages), (el, index) => ( */}
-                <Page height={600} pageNumber={pageNumber}>
+                <Page height={580} pageNumber={pageNumber}>
                   {console.log(pageNumber)}
+                  {sessionStorage.setItem("pageNumber", pageNumber)}
                 </Page>
                 <p>Page {pageNumber} of {numPages}</p>
                 {pageNumber > 1 &&
