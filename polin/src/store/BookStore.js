@@ -1,12 +1,12 @@
 import create from "zustand";
-import { persist } from "zustand/middleware";
-import axios from "axios"
+import { persist, devtools } from "zustand/middleware";
+import axios from "axios";
 
 const useBookStore = create((set) => ({
   books: [],
   fetchBook: async (url) => {
     const response = await axios.get(url);
-    // console.log(response, "response");
+    console.log("response", response);
     set({ books: await response.data });
   },
   addBooks: (book) =>

@@ -2,7 +2,8 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./routes/Home";
 import Profile from "./routes/Profile";
-import Kategori from "./routes/Category";
+import Kategori from "./routes/CategoryList";
+import Author from "./routes/AuthorList";
 import Login from "./routes/Login";
 import Preview from "./routes/modal_preview";
 import Reader from "./routes/Reader";
@@ -16,14 +17,13 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={() =>{
-          window.location.href = "http://localhost:8080/auth/google"
-          // return null;
         }} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/kategori" element={<Kategori />} />
-        
+        <Route path="/penulis" element={<Author />} />
         <Route path="/preview" element={<Preview />}>
           <Route path=":id" element={<Preview />} />
+          <Route path=":permalink" element={<Preview />} />
         </Route>
         <Route path="/reader" element={<Reader />}>
           <Route path=":id" element={<Reader />} />

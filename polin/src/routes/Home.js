@@ -14,26 +14,45 @@ import useUsers from "../store/users.js"
 const Home = () => {
   const [isLogin, setLogin] = useState(true);
   const {books, fetchBook} = useBookStore((state) => state);
+  const {user, fetchUser} = useUsers((state) => state)
+  // const books = useBookStore((state) => state.books)
   const [items, setItems] = useState([]);
   const navigate = useNavigate();
-  const [noMore, setNoMore] = useState(false);
-  const {user, fetchUser} = useUsers((state) => state)
+  const [hasMore, setHasMore] = useState(false);
+  const [page, setPage] = useState(1)
+ 
 
-  const fetchData = () => {
+
+  useEffect(() => {
+    fetchBook("https://api.polin.probolinggokota.go.id/books?page_id=0&limit=12")
+    // fetchUser("https://api.polin.probolinggokota.go.id/user/profile")
+    // const getBooks = async () => {
+    //   const res = await axios.get(`https://localhost:8080/books?page_id=1&limit=12`)
+    //   setItems(res)
+    // }
+  }, []);
+
+  const fetchBooks = async () => {
+    const res = await axios.get(`https://api.polin.probolinggokota.go.id/books?page_id=${page}&limit=12`)
+    // const data = await res.json()
+    return res
+  }
+
+  const fetchData = async () => {
     try {
-      // const data = await axios.get()
-      // setItems(data.data)
+      const data = await fetchBooks()
+      setItems([...items, ...data])
+      if (data.length === 0 || data.length < 12) {
+        setHasMore(false)
+      }
+      setPage(page + 1)
     } catch (err) {
       console.error(err);
     }
   };
 
-  useEffect(() => {
-    fetchBook("http://localhost:8080/books")
-    
-  }, []);
-
-  console.log()
+  console.log("user", user)
+  console.log("books", books)
 
   return (
     <div>
@@ -58,10 +77,11 @@ const Home = () => {
                 <Books
                   key={index}
                   id={element.id}
-                  cover={element.cover}
+                  cover={element.cover_url}
                   title={element.title}
-                  category={element.category}
+                  category={element.categories}
                   author={element.author}
+                  permalink={element.permalink}
                 />
               );
             })}
@@ -79,7 +99,7 @@ const Home = () => {
           <InfiniteScroll
             dataLength={items.length} //This is important fielementd to render the
             next={fetchData}
-            hasMore={noMore}
+            hasMore={hasMore}
             loader={<h4>Loading...</h4>}
             endMessage={
               <p className="my-5" style={{ textAlign: "center" }}>
@@ -101,6 +121,7 @@ const Home = () => {
                       title={element.title}
                       category={element.category}
                       author={element.author}
+                      permalink={element.permalink}
                     />
                   );
                 })}
