@@ -13,25 +13,23 @@ import useUsers from "../store/users.js"
 
 const Home = () => {
   const [isLogin, setLogin] = useState(true);
-  // const {books, fetchBook} = useBookStore((state) => state);
+  const {books, fetchBook} = useBookStore((state) => state);
   const {user, fetchUser} = useUsers((state) => state)
-  const books = useBookStore((state) => state.books)
+  // const books = useBookStore((state) => state.books)
   const [items, setItems] = useState([]);
   const navigate = useNavigate();
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1)
  
-  
+
 
   useEffect(() => {
-    // fetchBook("https://api.polin.probolinggokota.go.id/books?page_id=0&limit=12")
+    fetchBook("https://api.polin.probolinggokota.go.id/books?page_id=0&limit=12")
     // fetchUser("https://api.polin.probolinggokota.go.id/user/profile")
-    const getBooks = async () => {
-      const res = await axios.get(`https://localhost:8080/books?page_id=1&limit=12`)
-      setItems(res)
-    }
-    
-    
+    // const getBooks = async () => {
+    //   const res = await axios.get(`https://localhost:8080/books?page_id=1&limit=12`)
+    //   setItems(res)
+    // }
   }, []);
 
   const fetchBooks = async () => {
@@ -52,8 +50,6 @@ const Home = () => {
       console.error(err);
     }
   };
-
- 
 
   console.log("user", user)
   console.log("books", books)
@@ -85,6 +81,7 @@ const Home = () => {
                   title={element.title}
                   category={element.categories}
                   author={element.author}
+                  permalink={element.permalink}
                 />
               );
             })}
@@ -124,6 +121,7 @@ const Home = () => {
                       title={element.title}
                       category={element.category}
                       author={element.author}
+                      permalink={element.permalink}
                     />
                   );
                 })}

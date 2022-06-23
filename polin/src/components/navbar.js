@@ -3,24 +3,23 @@ import { Fragment } from "react";
 import { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import logoGoogle from "../assets/google-logo.png";
-import SearchBar from "./search.js"
+import SearchBar from "./search.js";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { Popover, Transition } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 
 export default function Navbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     handleTokenFromQueryParams();
   }, []);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const handleTokenFromQueryParams = () => {
     const query = new URLSearchParams(window.location.search);
     const accessToken = query.get("access_token");
     const refreshToken = query.get("refresh_token");
-    console.log(accessToken, refreshToken)
+    console.log(accessToken, refreshToken);
     const expirationDate = newExpirationDate();
     console.log("expiration Date", expirationDate);
     if (accessToken && refreshToken) {
@@ -36,9 +35,9 @@ export default function Navbar() {
   };
 
   const storeTokenData = async (token, refreshToken, expirationDate) => {
-    sessionStorage.setItem("accessToken", token);
-    sessionStorage.setItem("refreshToken", refreshToken);
-    sessionStorage.setItem("expirationDate", expirationDate);
+    localStorage.setItem("accessToken", token);
+    localStorage.setItem("refreshToken", refreshToken);
+    localStorage.setItem("expirationDate", expirationDate);
   };
 
   const signOut = () => {
@@ -69,7 +68,11 @@ export default function Navbar() {
               </Link>
             </div>
           </div>
-
+          <select className="flex justify-start">
+            <option value="title">Judul</option>
+            <option value="author">Penulis</option>
+            <option value="category">Kategori</option>
+          </select>
           <div className="flex justify-center">
             {/* <div className="mb-0 xl:w-96">
               <input

@@ -1,12 +1,12 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import useBookStore from "../store/BookStore.js";
 
 const Search = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [wordEntered, setWordEntered] = useState("");
 
-    const {books, fetchBook} = useBookStore((state) => state);
-    
+  const { books, fetchBook } = useBookStore((state) => state);
+
   const handleFilter = (event) => {
     const searchWord = event.target.value;
     setWordEntered(searchWord);
@@ -26,10 +26,10 @@ const Search = () => {
     setWordEntered("");
   };
 
-
   return (
     <div className="flex justify-center">
       <div className="mb-0 xl:w-96">
+        
         <input
           type="text"
           className="
@@ -40,7 +40,7 @@ const Search = () => {
           id="search"
           onChange={handleFilter}
           placeholder="Cari"
-        />
+        ></input>
       </div>
       {filteredData.length != 0 && (
         <div className="dataResult">

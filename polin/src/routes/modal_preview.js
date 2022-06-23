@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import useBookStore from "../store/BookStore.js";
 
 const Preview = () => {
-  const { id } = useParams();
+  const { id, permalink } = useParams();
   const  books  = useBookStore((state) => state.books);
 
   return (

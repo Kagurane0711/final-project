@@ -12,11 +12,11 @@ const Profile = () => {
 
   const signOut = () => {
     setIsLoggedIn(false);
-    sessionStorage.clear();
+    localStorage.clear();
   };
 
   useEffect(() => {
-    fetchUser("http://localhost:8080/user/profile");
+    fetchUser("https://api.polin.probolinggokota.go.id/user/profile");
   }, []);
 
   console.log("user", user);

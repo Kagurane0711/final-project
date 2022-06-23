@@ -23,6 +23,7 @@ const App = () => {
         <Route path="/penulis" element={<Author />} />
         <Route path="/preview" element={<Preview />}>
           <Route path=":id" element={<Preview />} />
+          <Route path=":permalink" element={<Preview />} />
         </Route>
         <Route path="/reader" element={<Reader />}>
           <Route path=":id" element={<Reader />} />
