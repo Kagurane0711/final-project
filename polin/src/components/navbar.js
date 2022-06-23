@@ -91,7 +91,7 @@ export default function Navbar() {
           </div>
           {!isLoggedIn && (
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-              <a href="http://localhost:8080/auth/google?redirect=http://localhost:3000">
+              <a href="https://api.polin.probolinggokota.go.id/auth/google?redirect=http://localhost:3000">
                 <button
                   // baca 2 access & refresh token dari query params
 
