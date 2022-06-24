@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/navbar.js";
 import Footer from "../components/footer.js";
 import Kategori from "../components/category.js";
-import axios from 'axios'
+import axios from "axios";
 
 const Category = () => {
   const [category, setCategory] = useState([]);
@@ -19,7 +20,7 @@ const Category = () => {
   const categories = [
     { 
       id: "1",
-      name: "action",
+      name: "Komik",
       count: "10"
     },
     { 
@@ -43,6 +44,7 @@ const Category = () => {
         <div className="flex justify-center">
           <a className=" text-xl text-slate-500 font-sans">Kategori</a>
         </div>
+
         <div className="flex justify-center">
           {categories.map((element, index) => {
             return (
@@ -55,6 +57,7 @@ const Category = () => {
             )
           })}
         </div>
+
       </main>
       <footer className=" bg-blue-500">
         <Footer />
