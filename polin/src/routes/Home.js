@@ -10,9 +10,10 @@ import { useNavigate } from "react-router";
 import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
 import useUsers from "../store/users.js"
+import { accessToken } from "../authProvider.js"
 
 const Home = () => {
-  const [isLogin, setLogin] = useState(true);
+  const [token, setToken] = useState(null);
   const {books, fetchBook} = useBookStore((state) => state);
   const {user, fetchUser} = useUsers((state) => state)
   // const books = useBookStore((state) => state.books)
@@ -24,8 +25,10 @@ const Home = () => {
 
 
   useEffect(() => {
+    
     fetchBook("https://api.polin.probolinggokota.go.id/books?page_id=0&limit=12")
-    // fetchUser("https://api.polin.probolinggokota.go.id/user/profile")
+    fetchUser("https://api.polin.probolinggokota.go.id/user/profile")
+    setToken(accessToken)
     // const getBooks = async () => {
     //   const res = await axios.get(`https://localhost:8080/books?page_id=1&limit=12`)
     //   setItems(res)
@@ -62,11 +65,11 @@ const Home = () => {
       <div className="">
         <div className="flex justify-center ">
           <p className="text-2xl font-sans mt-[130px] mb-6">
-            Paling banyak dibaca
+            Buku-buku terbaru
           </p>
         </div>
 
-        {!isLogin && (
+        {!token && (
           <div className="flex justify-center ">
           <div
             className="grid grid-cols-2 gap-4 px-5 md:grid-cols-2 md:gap-4 
@@ -95,7 +98,7 @@ const Home = () => {
             </div>
           </div>
         )}
-        {isLogin && (
+        {token && (
           <InfiniteScroll
             dataLength={items.length} //This is important fielementd to render the
             next={fetchData}

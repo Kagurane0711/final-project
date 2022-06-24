@@ -25,7 +25,7 @@ const Upload = () => {
     data.append("book", book)
     data.append("coverImage", coverImage)
 
-    await axios.post
+    await axios
     .post(`https://api.polin.probolinggokota.go.id/admin/books/add`, data)
     .then((res) => {console.log(res)})
     .catch((err) => {console.log(err)})
@@ -61,7 +61,7 @@ const Upload = () => {
                             type="text"
                             name="judul"
                             id="judul"
-                            onchange={(e) => setTitle(e.target.value)}
+                            onChange={(e) => setTitle(e.target.value)}
                             className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                           />
                         </div>
@@ -76,7 +76,7 @@ const Upload = () => {
                             type="text"
                             name="penulis"
                             id="penulis"
-                            onchange={(e) => setAuthor(e.target.value)}
+                            onChange={(e) => setAuthor(e.target.value)}
                             className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                           />
                         </div>
@@ -91,7 +91,7 @@ const Upload = () => {
                             type="text"
                             name="tahunTerbit"
                             id="tahunTerbit"
-                            onchange={(e) => setYear(e.target.value)}
+                            onChange={(e) => setYear(e.target.value)}
                             className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                           />
                         </div>
@@ -125,7 +125,7 @@ const Upload = () => {
                             type="text"
                             name="sinopsis"
                             id="sinopsis"
-                            onchange={(e) => setSummary(e.target.value)}
+                            onChange={(e) => setSummary(e.target.value)}
                             className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                           />
                         </div>
@@ -140,7 +140,7 @@ const Upload = () => {
                             type="file"
                             name="cover"
                             id="cover"
-                            onchange={(e) => setCoverImage(e.target.value)}
+                            onChange={(e) => setCoverImage(e.target.value)}
                             className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                           />
                         </div>
@@ -155,7 +155,7 @@ const Upload = () => {
                             type="file"
                             name="buku"
                             id="buku"
-                            onchange={(e) => setBook(e.target.value)}
+                            onChange={(e) => setBook(e.target.value)}
                             className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                           />
                         </div>

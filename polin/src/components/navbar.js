@@ -1,5 +1,4 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from "react";
+import React from "react";
 import { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import logoGoogle from "../assets/google-logo.png";
@@ -7,43 +6,22 @@ import SearchBar from "./search.js";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Popover } from "@headlessui/react";
+import { accessToken } from "../authProvider";
 
 export default function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [token, setToken] = useState(null)
 
   useEffect(() => {
-    handleTokenFromQueryParams();
+    setToken(accessToken)
   }, []);
 
-  const handleTokenFromQueryParams = () => {
-    const query = new URLSearchParams(window.location.search);
-    const accessToken = query.get("access_token");
-    const refreshToken = query.get("refresh_token");
-    console.log(accessToken, refreshToken);
-    const expirationDate = newExpirationDate();
-    console.log("expiration Date", expirationDate);
-    if (accessToken && refreshToken) {
-      storeTokenData(accessToken, refreshToken, expirationDate);
-      setIsLoggedIn(true);
-    }
-  };
+  // const newExpirationDate = () => {
+  //   var expiration = new Date();
+  //   expiration.setHours(expiration.getHours() + 1);
+  //   return expiration;
+  // };
 
-  const newExpirationDate = () => {
-    var expiration = new Date();
-    expiration.setHours(expiration.getHours() + 1);
-    return expiration;
-  };
-
-  const storeTokenData = async (token, refreshToken, expirationDate) => {
-    localStorage.setItem("accessToken", token);
-    localStorage.setItem("refreshToken", refreshToken);
-    localStorage.setItem("expirationDate", expirationDate);
-  };
-
-  const signOut = () => {
-    setIsLoggedIn(false);
-    sessionStorage.clear();
-  };
+  console.log(token)
 
   return (
     <Popover className="relative bg-white">
@@ -89,12 +67,11 @@ export default function Navbar() {
             </div> */}
             <SearchBar></SearchBar>
           </div>
-          {!isLoggedIn && (
+          {!token && (
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-              <a href="http://localhost:8080/auth/google?redirect=http://localhost:3000">
+              <a href="https://api.polin.probolinggokota.go.id/auth/google?redirect=http://localhost:3000">
                 <button
                   // baca 2 access & refresh token dari query params
-
                   className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gray-500 hover:bg-blue-600"
                 >
                   Masuk dengan{" "}
@@ -107,7 +84,7 @@ export default function Navbar() {
               </a>
             </div>
           )}
-          {isLoggedIn && (
+          {token && (
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
               <Link to="/profile">
                 <span className="flex">

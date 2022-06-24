@@ -2,22 +2,24 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../components/navbar.js";
 import Books from "../components/books.js";
 import { Link } from "react-router-dom";
-import { signOut } from "../components/navbar.js";
+import { logout } from "../authProvider";
 import useUsers from "../store/users.js";
 
 const Profile = () => {
   const { user, fetchUser } = useUsers((state) => state);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [isAdmin, setAdmin] = useState(true);
-
-  const signOut = () => {
-    setIsLoggedIn(false);
-    localStorage.clear();
-  };
+  const [isAdmin, setAdmin] = useState(false);
 
   useEffect(() => {
     fetchUser("https://api.polin.probolinggokota.go.id/user/profile");
   }, []);
+
+  const changeUser = () => {
+    if (isAdmin === false) {
+      setAdmin(true);
+    } else {
+      setAdmin(false);
+    }
+  } 
 
   console.log("user", user);
 
@@ -36,13 +38,31 @@ const Profile = () => {
                 <div className="image overflow-hidden">
                   <img
                     className="h-auto w-full mx-auto"
-                    src="https://wallpaperaccess.com/full/6999296.jpg"
+                    src="https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
                     alt=""
                   />
                 </div>
                 <h1 className="text-gray-900 font-bold text-xl leading-8 mt-5 my-1">
                   Fachri Ramadhan
                 </h1>
+              </div>
+              <div className="flex justify-center">
+                <label
+                  for="default-toggle"
+                  class="inline-flex relative items-center cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    value=""
+                    id="default-toggle"
+                    class="sr-only peer"
+                    onChange={changeUser}
+                  />
+                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-600">
+                    Admin
+                  </span>
+                </label>
               </div>
               <div className="flex justify-center pt-2.5">
                 {isAdmin && (
@@ -56,7 +76,7 @@ const Profile = () => {
                 )}
                 <Link to="/">
                   <button
-                    onClick={signOut}
+                    onClick={logout}
                     className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
                   >
                     <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
@@ -65,7 +85,7 @@ const Profile = () => {
                   </button>
                 </Link>
               </div>
-
+              
               {/* <!-- End of profile card --> */}
               <div className="my-4"></div>
             </div>
