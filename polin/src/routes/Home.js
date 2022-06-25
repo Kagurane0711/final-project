@@ -2,7 +2,6 @@ import React from "react";
 import "../styles/home.css";
 import { useState, useEffect } from "react";
 import useBookStore from "../store/BookStore.js";
-import { Link } from "react-router-dom";
 import Navbar from "../components/navbar.js";
 import Books from "../components/books.js";
 import Footer from "../components/footer.js";
@@ -26,7 +25,7 @@ const Home = () => {
     fetchUser("https://api.polin.probolinggokota.go.id/user/profile");
 
     const getBook = async () => {
-      const url = `https://api.polin.probolinggokota.go.id/books?page_id=0&limit=12`;
+      const url = `${process.env.REACT_APP_API_BASE_URL}/books?page_id=0&limit=12`;
       const book = await axios.get(url);
       setItems(book.data);
     };
@@ -110,7 +109,7 @@ const Home = () => {
         )}
         {token && (
           <InfiniteScroll
-            dataLength={items.length} //This is important fielementd to render the
+            dataLength={items.length}
             next={fetchData}
             hasMore={hasMore}
             loader={<h4>Loading...</h4>}

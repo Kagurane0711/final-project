@@ -4,24 +4,19 @@ import logo from "../assets/logo.png";
 import logoGoogle from "../assets/google-logo.png";
 import SearchBar from "./search.js";
 import { Link } from "react-router-dom";
+import useUsers from "../store/users.js";
 import axios from "axios";
 import { Popover } from "@headlessui/react";
 import { accessToken } from "../authProvider";
 
 export default function Navbar() {
   const [token, setToken] = useState(null)
+  const { user, fetchUser } = useUsers((state) => state);
 
   useEffect(() => {
+    fetchUser(`${process.env.REACT_APP_API_BASE_URL}/user/profile`);
     setToken(accessToken)
   }, []);
-
-  // const newExpirationDate = () => {
-  //   var expiration = new Date();
-  //   expiration.setHours(expiration.getHours() + 1);
-  //   return expiration;
-  // };
-
-  console.log(token)
 
   return (
     <Popover className="relative bg-white">
@@ -87,12 +82,12 @@ export default function Navbar() {
           {token && (
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
               <Link to="/profile">
-                <span className="flex">
-                  User
+                <span className="flex items-center text-lg">
+                  {user.given_name}
                   <img
-                    src={logoGoogle}
+                    src={user.picture}
                     alt="google logo png"
-                    className="w-[23px] ml-2"
+                    className="w-[35px] ml-4 rounded-full"
                   />
                 </span>
               </Link>

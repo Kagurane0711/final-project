@@ -1,11 +1,14 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-export default function category({id, name, count}) {
+export default function category({name}) {
   return (
-    <div className="lg:w-1/3 md:w-1/2 w-full p-4">
+    <div className="grid p-4">
+      <Link to={`/search/category/${name}`}>
       <div className="p-8 rounded-xl shadow-md">
         <h4 className="mb-2 text-lg font-semibold">{name}</h4>
       </div>
+      </Link>
     </div>
   );
 }

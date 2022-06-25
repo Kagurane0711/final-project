@@ -9,6 +9,7 @@ import Preview from "./routes/modal_preview";
 import Reader from "./routes/Reader";
 import Upload from "./routes/Upload";
 import Update from "./routes/UpdateBook";
+import SearchPage from "./routes/SearchPage";
 import "./App.css";
 
 const App = () => {
@@ -28,6 +29,11 @@ const App = () => {
         <Route path="/reader" element={<Reader />}>
           <Route path=":id" element={<Reader />}>
             <Route path=":permalink" element={<Reader />} />
+          </Route>
+        </Route>
+        <Route path="/search" element={<SearchPage />}>
+          <Route path=":type" element={<SearchPage />}>
+            <Route path=":name" element={<SearchPage />} />
           </Route>
         </Route>
         <Route path="/upload" element={<Upload />} />

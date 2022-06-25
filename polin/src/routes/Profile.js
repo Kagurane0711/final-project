@@ -4,15 +4,23 @@ import Books from "../components/books.js";
 import { Link } from "react-router-dom";
 import { logout } from "../authProvider";
 import useUsers from "../store/users.js";
+import axios from 'axios'
 import { accessToken } from "../authProvider.js"
 
 const Profile = () => {
   const { user, fetchUser } = useUsers((state) => state);
   const [isAdmin, setAdmin] = useState(false);
   const [token, setToken] = useState(null);
+  const [fav, setFav] = useState([]);
 
   useEffect(() => {
     fetchUser(`${process.env.REACT_APP_API_BASE_URL}/user/profile`);
+    const getFav = async () => {
+      const url = `${process.env.REACT_APP_API_BASE_URL}/user/favorites`;
+      const favorites = await axios.get(url);
+      setFav(favorites.data);
+    };
+    getFav();
   }, []);
 
   const changeUser = () => {
@@ -23,7 +31,8 @@ const Profile = () => {
     }
   } 
 
-  console.log("user", user);
+  console.log("user", user.picture);
+  console.log("fav", fav);
 
   return (
     <div>
@@ -40,12 +49,13 @@ const Profile = () => {
                 <div className="image overflow-hidden">
                   <img
                     className="h-auto w-full mx-auto"
-                    src="https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
-                    alt=""
+                    // src="https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
+                    src={user.picture}
+                    alt="Foto profile"
                   />
                 </div>
                 <h1 className="text-gray-900 font-bold text-xl leading-8 mt-5 my-1">
-                  Fachri Ramadhan
+                  {user.given_name + " " + user.family_name}
                 </h1>
               </div>
               <div className="flex justify-center">
