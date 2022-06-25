@@ -8,7 +8,7 @@ export default function Books({ id, cover, title, category, author, permalink })
 
   return (
     <div className="max-w-[280px] bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-      <Link to={`/preview/${id}`}>
+      <Link to={`/preview/${id}/${permalink}`}>
         <img
           className="rounded-t-lg h-[375px] w-[285px]"
           src={cover}
@@ -16,7 +16,7 @@ export default function Books({ id, cover, title, category, author, permalink })
         />
       </Link>
       <div className="p-5">
-        <Link to={`/preview/${id}`}>
+        <Link to={`/preview/${id}/${permalink}`}>
           <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
             {title}
           </h5>
@@ -25,7 +25,7 @@ export default function Books({ id, cover, title, category, author, permalink })
           Penulis : {author}
         </p>
         <p className="text-gray-700 dark:text-gray-400">
-          Kategori : {category}
+          Kategori : {category + " "}
         </p>
         <div className="flex justify-center">
           {/* {role && ( */}

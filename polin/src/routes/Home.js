@@ -9,53 +9,54 @@ import Footer from "../components/footer.js";
 import { useNavigate } from "react-router";
 import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
-import useUsers from "../store/users.js"
-import { accessToken } from "../authProvider.js"
+import useUsers from "../store/users.js";
+import { accessToken } from "../authProvider.js";
 
 const Home = () => {
   const [token, setToken] = useState(null);
-  const {books, fetchBook} = useBookStore((state) => state);
-  const {user, fetchUser} = useUsers((state) => state)
-  // const books = useBookStore((state) => state.books)
+  const { books, fetchBook } = useBookStore((state) => state);
+  const { user, fetchUser } = useUsers((state) => state);
   const [items, setItems] = useState([]);
   const navigate = useNavigate();
-  const [hasMore, setHasMore] = useState(false);
-  const [page, setPage] = useState(1)
- 
-
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    
-    fetchBook("https://api.polin.probolinggokota.go.id/books?page_id=0&limit=12")
-    fetchUser("https://api.polin.probolinggokota.go.id/user/profile")
-    setToken(accessToken)
-    // const getBooks = async () => {
-    //   const res = await axios.get(`https://localhost:8080/books?page_id=1&limit=12`)
-    //   setItems(res)
-    // }
+    // fetchBook(`${process.env.REACT_APP_API_BASE_URL}/books?page_id=0&limit=12`)
+    fetchUser("https://api.polin.probolinggokota.go.id/user/profile");
+
+    const getBook = async () => {
+      const url = `https://api.polin.probolinggokota.go.id/books?page_id=0&limit=12`;
+      const book = await axios.get(url);
+      setItems(book.data);
+    };
+    getBook();
+    setToken(accessToken);
+
+    setItems([...items].sort((a, b) => a.id - b.id));
   }, []);
 
   const fetchBooks = async () => {
-    const res = await axios.get(`https://api.polin.probolinggokota.go.id/books?page_id=${page}&limit=12`)
-    // const data = await res.json()
-    return res
-  }
+    const res = await axios.get(
+      `${process.env.REACT_APP_API_BASE_URL}/books?page_id=${page}&limit=12`
+    );
+    return res;
+  };
 
   const fetchData = async () => {
     try {
-      const data = await fetchBooks()
-      setItems([...items, ...data])
-      if (data.length === 0 || data.length < 12) {
-        setHasMore(false)
+      setHasMore(false);
+      const newBook = await fetchBooks();
+      console.log("items", newBook.data);
+      setItems([...items, ...newBook.data]);
+      if (items.length === 0 || items.length < 12) {
+        setHasMore(false);
       }
-      setPage(page + 1)
+      setPage(page + 1);
     } catch (err) {
       console.error(err);
     }
   };
-
-  console.log("user", user)
-  console.log("books", books)
 
   return (
     <div>
@@ -71,29 +72,38 @@ const Home = () => {
 
         {!token && (
           <div className="flex justify-center ">
-          <div
-            className="grid grid-cols-2 gap-4 px-5 md:grid-cols-2 md:gap-4 
+            <div
+              className="grid grid-cols-2 gap-4 px-5 md:grid-cols-2 md:gap-4 
           lg:grid-cols-3 lg:gap-6 xl:grid-cols-4"
-          >
-            {books.map((element, index) => {
-              return (
-                <Books
-                  key={index}
-                  id={element.id}
-                  cover={element.cover_url}
-                  title={element.title}
-                  category={element.categories}
-                  author={element.author}
-                  permalink={element.permalink}
-                />
-              );
-            })}
+            >
+              {items.map((element, index) => {
+                return (
+                  <Books
+                    key={index}
+                    id={element.id}
+                    cover={
+                      "https://api.polin.probolinggokota.go.id" +
+                      element.cover_url
+                    }
+                    title={element.title}
+                    category={element.categories}
+                    author={element.author}
+                    permalink={element.permalink}
+                  />
+                );
+              })}
               <div className="sm:col-span-2 md:col-span-2 lg:col-span-3 xl:col-span-4">
-                <Link to="/login">
+                <a
+                  href={
+                    process.env.REACT_APP_API_BASE_URL +
+                    "/auth/google?redirect=" +
+                    process.env.REACT_APP_API_REDIRECT_URL
+                  }
+                >
                   <p className="text-center text-xl text-slate-500 font-sans my-6">
                     Masuk untuk melihat lebih banyak
                   </p>
-                </Link>
+                </a>
               </div>
             </div>
           </div>
@@ -106,7 +116,7 @@ const Home = () => {
             loader={<h4>Loading...</h4>}
             endMessage={
               <p className="my-5" style={{ textAlign: "center" }}>
-                <b >Semua buku telah ditampilkan!</b>
+                <b>Semua buku telah ditampilkan!</b>
               </p>
             }
           >
@@ -115,14 +125,17 @@ const Home = () => {
                 className="grid grid-cols-2 gap-4 px-5 md:grid-cols-2 md:gap-4 
               lg:grid-cols-3 lg:gap-6 xl:grid-cols-4"
               >
-                {books.map((element, index) => {
+                {items.map((element, index) => {
                   return (
                     <Books
                       key={index}
                       id={element.id}
-                      cover={element.cover}
+                      cover={
+                        "https://api.polin.probolinggokota.go.id" +
+                        element.cover_url
+                      }
                       title={element.title}
-                      category={element.category}
+                      category={element.categories}
                       author={element.author}
                       permalink={element.permalink}
                     />

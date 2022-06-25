@@ -46,11 +46,11 @@ export default function Navbar() {
               </Link>
             </div>
           </div>
-          <select className="flex justify-start">
+          {/* <select className="flex justify-start">
             <option value="title">Judul</option>
             <option value="author">Penulis</option>
             <option value="category">Kategori</option>
-          </select>
+          </select> */}
           <div className="flex justify-center">
             {/* <div className="mb-0 xl:w-96">
               <input
@@ -69,7 +69,7 @@ export default function Navbar() {
           </div>
           {!token && (
             <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-              <a href="https://api.polin.probolinggokota.go.id/auth/google?redirect=http://localhost:3000">
+              <a href={process.env.REACT_APP_API_BASE_URL + "/auth/google?redirect=" + process.env.REACT_APP_API_REDIRECT_URL}>
                 <button
                   // baca 2 access & refresh token dari query params
                   className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gray-500 hover:bg-blue-600"

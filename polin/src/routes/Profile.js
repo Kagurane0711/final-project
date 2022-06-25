@@ -4,13 +4,15 @@ import Books from "../components/books.js";
 import { Link } from "react-router-dom";
 import { logout } from "../authProvider";
 import useUsers from "../store/users.js";
+import { accessToken } from "../authProvider.js"
 
 const Profile = () => {
   const { user, fetchUser } = useUsers((state) => state);
   const [isAdmin, setAdmin] = useState(false);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    fetchUser("https://api.polin.probolinggokota.go.id/user/profile");
+    fetchUser(`${process.env.REACT_APP_API_BASE_URL}/user/profile`);
   }, []);
 
   const changeUser = () => {

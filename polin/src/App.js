@@ -16,17 +16,19 @@ const App = () => {
     <>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={() =>{
-        }} />
+        <Route path="/login" element={() => {}} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/kategori" element={<Kategori />} />
         <Route path="/penulis" element={<Author />} />
         <Route path="/preview" element={<Preview />}>
-          <Route path=":id" element={<Preview />} />
-          <Route path=":permalink" element={<Preview />} />
+          <Route path=":id" element={<Preview />}>
+            <Route path=":permalink" element={<Preview />} />
+          </Route>
         </Route>
         <Route path="/reader" element={<Reader />}>
-          <Route path=":id" element={<Reader />} />
+          <Route path=":id" element={<Reader />}>
+            <Route path=":permalink" element={<Reader />} />
+          </Route>
         </Route>
         <Route path="/upload" element={<Upload />} />
         <Route path="/update" element={<Update />} />
