@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function category({id, name, count}) {
+export default function category({name}) {
   return (
     <div className="lg:w-1/3 md:w-1/2 w-full p-4">
       <div className="p-8 rounded-xl shadow-md">
