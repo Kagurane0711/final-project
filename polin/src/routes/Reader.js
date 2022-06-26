@@ -15,7 +15,7 @@ export default function Reader() {
 
   useEffect(() => {
     const getBook = async () => {
-      const url = `https://api.polin.probolinggokota.go.id/book/${id}`;
+      const url = `${process.env.REACT_APP_API_BASE_URL}/book/${id}`;
       const book = await axios.get(url);
       setBook(book.data);
     };

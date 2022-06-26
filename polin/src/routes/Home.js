@@ -22,8 +22,6 @@ const Home = () => {
 
   useEffect(() => {
     // fetchBook(`${process.env.REACT_APP_API_BASE_URL}/books?page_id=0&limit=12`)
-    fetchUser("https://api.polin.probolinggokota.go.id/user/profile");
-
     const getBook = async () => {
       const url = `${process.env.REACT_APP_API_BASE_URL}/books?page_id=0&limit=12`;
       const book = await axios.get(url);
@@ -48,7 +46,7 @@ const Home = () => {
       const newBook = await fetchBooks();
       console.log("items", newBook.data);
       setItems([...items, ...newBook.data]);
-      if (items.length === 0 || items.length < 12) {
+      if (items.length === 0 || newBook.length < 12) {
         setHasMore(false);
       }
       setPage(page + 1);
@@ -81,7 +79,7 @@ const Home = () => {
                     key={index}
                     id={element.id}
                     cover={
-                      "https://api.polin.probolinggokota.go.id" +
+                      `${process.env.REACT_APP_API_BASE_URL}` +
                       element.cover_url
                     }
                     title={element.title}
@@ -130,7 +128,7 @@ const Home = () => {
                       key={index}
                       id={element.id}
                       cover={
-                        "https://api.polin.probolinggokota.go.id" +
+                        `${process.env.REACT_APP_API_BASE_URL}` +
                         element.cover_url
                       }
                       title={element.title}

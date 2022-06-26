@@ -1,45 +1,90 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Navbar from "../components/navbar.js";
-// import Books from "../components/books.js";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import useBookStore from "../store/BookStore.js";
-import axios from 'axios'
+import useUsers from "../store/users.js";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Preview = () => {
   const [book, setBook] = useState([]);
   const { id, permalink } = useParams();
-  const  books  = useBookStore((state) => state.books);
-  
+  const [isFav, setIsFav] = useState(false);
+  const { addFavorite, removeFavorite } = useUsers((state) => state);
+  const successAdd = () => toast("Berhasil menambahkan ke favorit!");
+  const successDel = () => toast("Berhasil menghapus dari favorit!");
+
+  const addFav = async () => {
+    addFavorite(id);
+    setIsFav(true);
+    successAdd()
+  };
+
+  const delFav = async () => {
+    removeFavorite(id);
+    successDel()
+  };
+
   useEffect(() => {
     const getBook = async () => {
-      const url = `https://api.polin.probolinggokota.go.id/book/${id}`;
+      const url = `${process.env.REACT_APP_API_BASE_URL}/book/${id}`;
       const book = await axios.get(url);
       setBook(book.data);
     };
     getBook();
+    // setIsFav(book.is_favorite);
   }, []);
 
-  console.log(books)
   return (
     <div>
-      <div className="fixed w-full">
+      <div className="fixed z-10 w-full">
         <Navbar />
       </div>
       <div className="grid place-items-center">
         <div className="grid grid-rows-6 grid-flow-col gap-8 h-[550px] w-[900px] mt-[130px]">
-          <div className="row-span-4 border">
-            <img src={"https://api.polin.probolinggokota.go.id" + book.cover_url} className="h-full m-auto" />
+          <div className="row-span-4">
+            <img
+              src={`${process.env.REACT_APP_API_BASE_URL}` + book.cover_url}
+              className="h-full m-auto"
+            />
           </div>
-          <div className="row-span-1">
+          <div className="flex justify-center row-span-1">
             <p className="text-md font-medium">{book.title}</p>
           </div>
+
           <div className="flex row-span-1 justify-center pt-2.5">
-            <button className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
+            <button
+              onClick={addFav}
+              // onclick={successAdd}
+              className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
+            >
               <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
                 Favorit
               </span>
             </button>
+
+            <button
+              onClick={delFav}
+              // onclick={successDel}
+              className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
+            >
+              <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                Hapus Favorit
+              </span>
+            </button>
+            <ToastContainer
+              position="top-center"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
+
             <Link to={`/reader/${id}/${permalink}`}>
               <button className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
                 <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
@@ -60,10 +105,8 @@ const Preview = () => {
             <p className="absolute left-5">Tahun terbit</p>
             <p className="absolute right-5"> {book.year}</p>
           </div>
-          <div className="row-span-3 col-span-2 p-3 border">
-            <p>
-              {book.description}
-            </p>
+          <div className="row-span-3 col-span-2 p-3 border overflow-y-auto">
+            <p>{book.description}</p>
           </div>
         </div>
       </div>

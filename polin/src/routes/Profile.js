@@ -4,24 +4,18 @@ import Books from "../components/books.js";
 import { Link } from "react-router-dom";
 import { logout } from "../authProvider";
 import useUsers from "../store/users.js";
-import axios from 'axios'
-import { accessToken } from "../authProvider.js"
 
 const Profile = () => {
-  const { user, fetchUser } = useUsers((state) => state);
+  const { user, fetchUser, userFavorites, fetchFav } = useUsers(
+    (state) => state
+  );
   const [isAdmin, setAdmin] = useState(false);
-  const [token, setToken] = useState(null);
-  const [fav, setFav] = useState([]);
 
   useEffect(() => {
     fetchUser(`${process.env.REACT_APP_API_BASE_URL}/user/profile`);
-    const getFav = async () => {
-      const url = `${process.env.REACT_APP_API_BASE_URL}/user/favorites`;
-      const favorites = await axios.get(url);
-      setFav(favorites.data);
-    };
-    getFav();
+    fetchFav(`${process.env.REACT_APP_API_BASE_URL}/user/favorites`);
   }, []);
+  console.log("fav", userFavorites);
 
   const changeUser = () => {
     if (isAdmin === false) {
@@ -29,14 +23,11 @@ const Profile = () => {
     } else {
       setAdmin(false);
     }
-  } 
-
-  console.log("user", user.picture);
-  console.log("fav", fav);
+  };
 
   return (
     <div>
-      <div className="fixed w-full">
+      <div className="fixed z-10 w-full">
         <Navbar />
       </div>
       <div className="flex justify-center">
@@ -49,7 +40,6 @@ const Profile = () => {
                 <div className="image overflow-hidden">
                   <img
                     className="h-auto w-full mx-auto"
-                    // src="https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
                     src={user.picture}
                     alt="Foto profile"
                   />
@@ -97,7 +87,7 @@ const Profile = () => {
                   </button>
                 </Link>
               </div>
-              
+
               {/* <!-- End of profile card --> */}
               <div className="my-4"></div>
             </div>
@@ -108,10 +98,29 @@ const Profile = () => {
               <div className="bg-white p-3 shadow-sm rounded-sm">
                 <div className="flex items-center space-x-2 font-semibold text-gray-900 leading-8">
                   <span clas="text-green-500"></span>
-                  <span className="tracking-wide text-md">Favorit</span>
+                  <span className="tracking-wide text-xl pl-3 mb-5">Favorit</span>
                 </div>
-                <div height={300} className=" text-gray-700 m-0">
-                  <Books className="" />
+                <div
+                  height={300}
+                  className="grid grid-cols-2 gap-4 px-5 md:grid-cols-2 md:gap-4 
+          lg:grid-cols-2 xl:grid-cols-3 text-gray-700 m-0"
+                >
+                  {userFavorites.map((element, index) => {
+                    return (
+                      <Books
+                        key={index}
+                        id={element.id}
+                        cover={
+                          `${process.env.REACT_APP_API_BASE_URL}` +
+                          element.cover_url
+                        }
+                        title={element.title}
+                        category={element.categories}
+                        author={element.author}
+                        permalink={element.permalink}
+                      />
+                    );
+                  })}
                 </div>
               </div>
               {/* <!-- End of about section --> */}
@@ -127,8 +136,6 @@ const Profile = () => {
               </div>
               <div className="my-4"></div>
               {/* End of bookmark  */}
-
-              {/* </div>  */}
               {/* <!-- End of profile tab --> */}
             </div>
           </div>

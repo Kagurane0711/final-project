@@ -4,36 +4,35 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 const Search = () => {
-  const [filteredData, setFilteredData] = useState([]);
-  const [wordEntered, setWordEntered] = useState("");
   const [type, setType] = useState("title");
   const [term, setTerm] = useState("");
-  // const type = useState("")
   const { books, fetchBook } = useBookStore((state) => state);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
-    setTerm(event.target.value)
-  }
+    setTerm(event.target.value);
+  };
 
   const handleSumbit = (event) => {
-    console.log(event.target)
-    event.preventDefault()
-    event.stopPropagation()
-    navigate(`/search/${type}/${term}`)
-  }
+    event.preventDefault();
+    event.stopPropagation();
+    navigate(`/search/${type}/${term}`);
+  };
 
   return (
     <div>
       <form onSubmit={handleSumbit}>
         <div className="flex">
-          <select defaultValue={"default"} onChange={(e) => setType(e.target.value)} className="flex justify-start z-10 w-44 bg-white rounded-l-lg divide-y divide-gray-100 border">
-            {/* <option value="default">Pilih</option> */}
+          <select
+            defaultValue={"default"}
+            onChange={(e) => setType(e.target.value)}
+            className="flex justify-start z-10 w-44 bg-white rounded-l-lg divide-y divide-gray-100 border"
+          >
             <option value="title">Judul</option>
             <option value="author">Penulis</option>
             <option value="category">Kategori</option>
           </select>
-          {/* </div> */}
+
           <div className="relative w-full">
             <input
               type="search"
@@ -45,7 +44,6 @@ const Search = () => {
             />
             <button
               type="submit"
-              onClick={console.log(type)}
               className="absolute top-0 right-0 p-2.5 text-sm font-medium text-white bg-blue-700 rounded-r-lg border border-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 "
             >
               <svg

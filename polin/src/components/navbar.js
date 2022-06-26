@@ -41,25 +41,9 @@ export default function Navbar() {
               </Link>
             </div>
           </div>
-          {/* <select className="flex justify-start">
-            <option value="title">Judul</option>
-            <option value="author">Penulis</option>
-            <option value="category">Kategori</option>
-          </select> */}
+          
           <div className="flex justify-center">
-            {/* <div className="mb-0 xl:w-96">
-              <input
-                type="search"
-                className="
-        form-control block w-full m-0 px-3 py-1.5 text-base font-normal text-gray-700
-        bg-white bg-clip-padding border border-solid border-gray-300
-        rounded transition ease-in-out
-        focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                id="search"
-                onChange={handleSearch}
-                placeholder="Cari"
-              />
-            </div> */}
+            
             <SearchBar></SearchBar>
           </div>
           {!token && (
@@ -86,7 +70,7 @@ export default function Navbar() {
                   {user.given_name}
                   <img
                     src={user.picture}
-                    alt="google logo png"
+                    alt="Foto profile"
                     className="w-[35px] ml-4 rounded-full"
                   />
                 </span>

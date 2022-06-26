@@ -5,6 +5,7 @@ import { accessToken } from "../authProvider.js"
 
 const useUsers = create((set) => ({
         user: [],
+        userFavorites: [],
         fetchUser: async (url) => {
             const response = await axios({
                 method: "get",
@@ -19,6 +20,39 @@ const useUsers = create((set) => ({
                 set({ loggedIn: true})
             }
         },
+        fetchFav: async (url) => {
+            const response = await axios({
+                method: "get",
+                url: url,
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                }
+            })
+            // console.log("response", response);
+            if (response.status === 200) {
+                set({ userFavorites: await response.data})
+            }
+        },
+        addFavorite: async (id) => {
+            const response = await axios({
+                method: "put",
+                url: `${process.env.REACT_APP_API_BASE_URL}/user/favorites/add?book_id=${id}`,
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                }
+            })
+            console.log("response", response)
+        },
+        removeFavorite: async (id) => {
+            const response = await axios({
+                method: "delete",
+                url: `${process.env.REACT_APP_API_BASE_URL}/user/favorites/remove?book_id=${id}`,
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                }
+            })
+            console.log("response", response)
+        }
     })
 )
 

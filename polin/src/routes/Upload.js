@@ -26,7 +26,7 @@ const Upload = () => {
     data.append("coverImage", coverImage)
 
     await axios
-    .post(`https://api.polin.probolinggokota.go.id/admin/books/add`, data)
+    .post(`${process.env.REACT_APP_API_BASE_URL}/admin/books/add`, data)
     .then((res) => {console.log(res)})
     .catch((err) => {console.log(err)})
   };
