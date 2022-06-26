@@ -53,6 +53,7 @@ const Author = () => {
       </footer>
     </div>
   );
+
 };
 
 export default Author;
