@@ -4,7 +4,9 @@ import Navbar from "../components/navbar.js";
 import Footer from "../components/footer.js";
 import Kategori from "../components/category.js";
 import axios from "axios";
+
 import { useParams } from "react-router-dom";
+
 
 const Category = () => {
   const [category, setCategory] = useState([]);
@@ -19,6 +21,7 @@ const Category = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
+
 
   return (
     <div className="flex flex-col h-screen justify-between">
@@ -47,6 +50,7 @@ const Category = () => {
             })}
           </div>
         </div>
+
       </main>
       {/* <footer className=" bg-blue-500"> */}
       <Footer />

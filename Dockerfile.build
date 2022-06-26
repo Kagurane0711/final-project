@@ -8,4 +8,12 @@ RUN npm install
 
 COPY ./polin/ /app/
 
+ARG API_Base_URL=https://api.polin.probolinggokota.go.id
+ARG API_Redirect_URL=https://polin.probolinggokota.go.id
+
+ENV REACT_APP_API_BASE_URL=$API_Base_URL
+ENV REACT_APP_API_REDIRECT_URL=$API_Redirect_URL
+
+RUN rm -rf .env
+
 RUN npm run build

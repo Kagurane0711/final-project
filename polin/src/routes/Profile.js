@@ -49,7 +49,6 @@ const Profile = () => {
                 <div className="image overflow-hidden">
                   <img
                     className="h-auto w-full mx-auto"
-                    // src="https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
                     src={user.picture}
                     alt="Foto profile"
                   />
@@ -127,8 +126,6 @@ const Profile = () => {
               </div>
               <div className="my-4"></div>
               {/* End of bookmark  */}
-
-              {/* </div>  */}
               {/* <!-- End of profile tab --> */}
             </div>
           </div>
