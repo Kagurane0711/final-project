@@ -37,7 +37,12 @@ const App = () => {
           </Route>
         </Route>
         <Route path="/upload" element={<Upload />} />
-        <Route path="/update" element={<Update />} />
+
+        <Route path="/update" element={<Update />}>
+          <Route path=":id" element={<Reader />}>
+            <Route path=":permalink" element={<Reader />} />
+          </Route>
+        </Route>
       </Routes>
     </>
   );

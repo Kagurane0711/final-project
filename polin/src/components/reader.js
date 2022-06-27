@@ -35,9 +35,7 @@ export default function Reader() {
           <div className="">
             <Document file="/sample.pdf" pageNumber={pageNumber} onLoadSuccess={onDocummentLoadSuccess}>
               {/* {Array.from(new Array(numPages), (el, index) => ( */}
-                <Page height={600} >
-                  {console.log(pageNumber)}
-                </Page>
+                <Page height={600} ></Page>
                 <p>Page {pageNumber} of {numPages}</p>
                 {pageNumber > 1 &&
                 <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l" onClick={changePageBack}>Sebelumnya</button>

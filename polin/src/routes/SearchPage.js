@@ -9,15 +9,11 @@ import { useParams } from "react-router-dom";
 
 const SearchPage = () => {
   const [data, setData] = useState([]);
-  // const [type, setType] = useState("");
-  // const [term, setTerm] = useState("")
   const type = useParams();
 
   const fetchData = async () => {
     const url = `${process.env.REACT_APP_API_BASE_URL}/books/search?type=${type.type}&term=${type.name}`
     const res = await axios.get(url);
-    console.log("res", res);
-    console.log(type);
     setData(res.data);
   };
 

@@ -7,7 +7,6 @@ import axios from "axios";
 
 import { useParams } from "react-router-dom";
 
-
 const Category = () => {
   const [category, setCategory] = useState([]);
 
@@ -22,20 +21,19 @@ const Category = () => {
     fetchCategories();
   }, []);
 
-
   return (
     <div className="flex flex-col h-screen justify-between">
       <header className="h-10 bg-red-500">
         <Navbar />
       </header>
-      <main className="mt-[80px] mb-auto h-10">
+      <main className="mt-[80px] mb-auto">
         <div className="flex justify-center">
           <a className=" text-xl text-slate-500 font-sans">Kategori</a>
         </div>
 
         <div className="flex justify-center">
           <div
-            className="grid grid-cols-2 gap-4 px-5 md:grid-cols-2 md:gap-4 
+            className="grid grid-cols-2 gap-4 px-5 md:grid-cols-3 md:gap-6 
           lg:grid-cols-3 lg:gap-6 xl:grid-cols-4"
           >
             {category.map((element, index) => {
@@ -50,11 +48,9 @@ const Category = () => {
             })}
           </div>
         </div>
-
       </main>
-      {/* <footer className=" bg-blue-500"> */}
+
       <Footer />
-      {/* </footer> */}
     </div>
   );
 };

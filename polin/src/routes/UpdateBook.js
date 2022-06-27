@@ -36,7 +36,7 @@ const Upload = () => {
       <div className="fixed w-full">
         <Navbar />
       </div>
-      <div class="flex flex-col h-screen justify-between">
+      <div className="flex flex-col h-screen justify-between">
         <main className="mb-auto mt-[100px] h-10">
           <div className="mt-10 sm:mt-0">
             <div className="flex justify-center ">
@@ -106,7 +106,7 @@ const Upload = () => {
                             // type="text"
                             name="kategori"
                             id="kategori"
-                            // onchange={(e) => setCategory(e.target.value)}
+                            onChange={(e) => setCategory(e.target.value)}
                             className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                           >
                             <option value="ccomedy">Komedi</option>
@@ -140,7 +140,7 @@ const Upload = () => {
                             type="file"
                             name="cover"
                             id="cover"
-                            onChange={(e) => setCoverImage(e.target.value)}
+                            onChange={(e) => setCoverImage(e.target.value[0])}
                             className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                           />
                         </div>
@@ -155,7 +155,7 @@ const Upload = () => {
                             type="file"
                             name="buku"
                             id="buku"
-                            onChange={(e) => setBook(e.target.value)}
+                            onChange={(e) => setBook(e.target.value[0])}
                             className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                           />
                         </div>
@@ -163,7 +163,7 @@ const Upload = () => {
                     </div>
                     <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                       <input
-                        // onClick={handleFormSubmit}
+                        // onClick={handleFormSubmit()}
                         type="submit"
                         value="Submit"
                         className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

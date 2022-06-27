@@ -4,7 +4,6 @@ import { useState } from "react";
 import Navbar from "../components/navbar.js";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { bookmarkPlugin } from "@react-pdf-viewer/bookmark";
 import useBookStore from "../store/BookStore.js";
 
 export default function Reader() {
@@ -38,9 +37,6 @@ export default function Reader() {
   function changePageNext() {
     changePage(+1);
   }
-
-  console.log("book", book);
-  console.log("id", id);
 
   return (
     <center>

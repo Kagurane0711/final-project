@@ -1,5 +1,4 @@
 import create from "zustand";
-import { persist, devtools } from "zustand/middleware";
 import axios from "axios";
 
 const useBookStore = create((set) => ({
@@ -21,10 +20,16 @@ const useBookStore = create((set) => ({
         },
       ],
     })),
-  removeBooks: (id) =>
-    set((state) => ({
-      currentBook: state.books.find((book) => book.id !== id),
-    })),
+  removeBooks: async (id) => {
+    const response = await axios({
+      method: "delete",
+      url: `${process.env.REACT_APP_API_BASE_URL}/admin/books/remove?book_id=${id}`,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    });
+    console.log("response", response);
+  },
   updateBooks: (book) =>
     set((state) => ({
       books: state.books.map((item) => {

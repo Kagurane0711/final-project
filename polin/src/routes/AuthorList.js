@@ -19,8 +19,6 @@ const Author = () => {
     fetchAuthors();
   }, []);
 
-  console.log(author);
-
   return (
     <div className="flex flex-col h-screen justify-between">
       <header className="h-10 bg-red-500">

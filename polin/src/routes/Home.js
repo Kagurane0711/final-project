@@ -44,7 +44,6 @@ const Home = () => {
     try {
       setHasMore(false);
       const newBook = await fetchBooks();
-      console.log("items", newBook.data);
       setItems([...items, ...newBook.data]);
       if (items.length === 0 || newBook.length < 12) {
         setHasMore(false);

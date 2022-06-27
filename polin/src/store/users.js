@@ -1,5 +1,4 @@
 import create from "zustand"
-import { devtools } from "zustand/middleware"
 import axios from "axios"
 import { accessToken } from "../authProvider.js"
 
@@ -52,7 +51,17 @@ const useUsers = create((set) => ({
                 }
             })
             console.log("response", response)
-        }
+        },
+        changeRole: async () => {
+            const response = await axios({
+                method: "post",
+                url: `${process.env.REACT_APP_API_BASE_URL}/user/admin/set?enabled=1`,
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                }
+            })
+            console.log("response", response)
+        },
     })
 )
 
