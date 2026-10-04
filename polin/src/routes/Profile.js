@@ -18,7 +18,7 @@ const Profile = () => {
 
   const changeUser = () => {
     if (isAdmin === false) {
-      setAdmin(true);
+      setAdmin(false);
     } else {
       setAdmin(false);
     }

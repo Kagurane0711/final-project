@@ -23,6 +23,7 @@ const Upload = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    const formFile = new FormData();
     const formData = new FormData();
     formData.append("title", title);
     formData.append("year", year);
@@ -32,23 +33,63 @@ const Upload = () => {
     formData.append("publisher_id", publisher_id);
     formData.append("author_id", author_id);
     formData.append("category_ids", category_ids);
-    formData.append("cover_image", cover_image);
-    formData.append("book", book);
+    formFile.append("cover_image", cover_image);
+    formFile.append("book", book);
 
     const response = await axios({
       method: "post",
       url: `${process.env.REACT_APP_API_BASE_URL}/admin/books/add`,
-      data: formData,
+      data: formFile,
+      data: JSON.stringify(formData),
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        "Content-type": "multipart/form-data",
-        "Content-Disposition": "form-data",
-        name: "body",
+        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+        "Content-type": `multipart/form-data`, 
+        boundary: `--0cc175b9c0f1b6a831c399e269772661`,
+        // "Content-Disposition": "form-data",
+        // name: "body",
         // "Content-type": "application/octet-stream",
-        boundary: "0cc175b9c0f1b6a831c399e269772661",
       },
     });
+    // await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/books/add`),
+    //   formData,
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    //       "Content-type": `multipart/form-data`,
+    //       // boundary: `--0cc175b9c0f1b6a831c399e269772661`,
+    //     },
+    //   };
   };
+
+  // const handleFormSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const formFile = new FormData();
+  //   formFile.append("cover_image", cover_image);
+  //   formFile.append("book", book);
+
+  //   fetch(`${process.env.REACT_APP_API_BASE_URL}/admin/books/add`), {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "multipart/form-data boundary=--0cc175b9c0f1b6a831c399e269772661"
+  //       + "content-Disposition: form-data" + "Content-type: application/json"
+  //     }
+  //   }
+
+  // await axios({
+  //   method: "post",
+  //   url: `${process.env.REACT_APP_API_BASE_URL}/admin/books/add`,
+  //   body: formFile,
+  //   // data: JSON.stringify(formData),
+  //   headers: {
+  //     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+  //     "Content-type": "multipart/form-data",
+  //     boundary: "--0cc175b9c0f1b6a831c399e269772661",
+  //     // "Content-Disposition": "form-data",
+  //     // name: "body",
+  //     // "Content-type": "application/octet-stream",
+  //   },
+  // });
+  // };
 
   const handleCover = (cover) => {
     setCoverImage(cover);
@@ -57,10 +98,6 @@ const Upload = () => {
   const handleBook = (book) => {
     setBook(book);
   };
-
-  // useEffect(() => {
-  //    changeRole()
-  // }, []);
 
   return (
     <div>
@@ -77,7 +114,7 @@ const Upload = () => {
             </div>
             <div className="flex justify-center">
               <div className="flex justify-center mt-5 md:mt-0 md:col-span-2">
-                <form onSubmit={handleFormSubmit} encType="multipart/form-data">
+                <form onSubmit={handleFormSubmit}>
                   <div className="shadow overflow-hidden sm:rounded-md">
                     <div className="px-4 py-5 bg-gray-300 sm:p-6">
                       <div className="grid grid-cols-2 gap-6 h-[370px] w-[500px]">
