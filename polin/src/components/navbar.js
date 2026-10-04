@@ -1,84 +1,177 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import logoGoogle from "../assets/google-logo.png";
 import SearchBar from "./search.js";
-import { Link } from "react-router-dom";
 import useUsers from "../store/users.js";
-import axios from "axios";
-import { Popover } from "@headlessui/react";
-import { accessToken } from "../authProvider";
+import { getAccessToken } from "../authProvider";
+import { getGoogleAuthUrl } from "../services/api";
 
 export default function Navbar() {
-  const [token, setToken] = useState(null)
-  const { user, fetchUser } = useUsers((state) => state);
+  const [token, setToken] = useState(() => getAccessToken());
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, fetchUser } = useUsers();
 
   useEffect(() => {
-    fetchUser(`${process.env.REACT_APP_API_BASE_URL}/user/profile`);
-    setToken(accessToken)
-  }, []);
+    const currentToken = getAccessToken();
+    setToken(currentToken);
+    if (currentToken && !user) {
+      fetchUser();
+    }
+  }, [user, fetchUser]);
 
   return (
-    <Popover className="relative bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
-          <div className="flex justify-start lg:w-40 lg:flex-1 ">
-            <Link to="/">
-              <img
-                className="h-10 w-auto sm:h-10"
-                src={logo}
-                alt="logo polin"
-              />
+    <nav className="bg-white border-b border-gray-200 shadow-sm relative z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16 md:space-x-8">
+          {/* Logo & Main Nav */}
+          <div className="flex items-center space-x-6">
+            <Link to="/" className="flex items-center flex-shrink-0">
+              <img className="h-9 w-auto" src={logo} alt="Polin Logo" />
             </Link>
-            <div className="w-20 ml-7 py-2 ">
-              <Link to="/Kategori">
-                <p className="text-center text-slate-500">Kategori</p>
+            <div className="hidden md:flex space-x-4">
+              <Link
+                to="/kategori"
+                className="text-slate-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+              >
+                Kategori
               </Link>
-            </div>
-            <div className="w-20 py-2">
-              <Link to="/penulis">
-                <p className="text-center text-slate-500">Penulis</p>
+              <Link
+                to="/penulis"
+                className="text-slate-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+              >
+                Penulis
               </Link>
             </div>
           </div>
-          
-          <div className="flex justify-center">
-            
-            <SearchBar></SearchBar>
+
+          {/* Search Bar */}
+          <div className="flex-1 max-w-lg mx-4">
+            <SearchBar />
           </div>
-          {!token && (
-            <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-              <a href={process.env.REACT_APP_API_BASE_URL + "/auth/google?redirect=" + process.env.REACT_APP_API_REDIRECT_URL}>
-                <button
-                  // baca 2 access & refresh token dari query params
-                  className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gray-500 hover:bg-blue-600"
-                >
-                  Masuk dengan{" "}
-                  <img
-                    src={logoGoogle}
-                    alt="google logo png"
-                    className="w-[23px] ml-2"
-                  />
-                </button>
+
+          {/* Auth / Profile Actions */}
+          <div className="hidden md:flex items-center space-x-4">
+            {!token ? (
+              <a
+                href={getGoogleAuthUrl()}
+                className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+              >
+                <span>Masuk dengan</span>
+                <img
+                  src={logoGoogle}
+                  alt="Google"
+                  className="w-5 h-5 ml-2 bg-white rounded-full p-0.5"
+                />
               </a>
-            </div>
-          )}
-          {token && (
-            <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-              <Link to="/profile">
-                <span className="flex items-center text-lg">
-                  {user.given_name}
+            ) : (
+              <Link
+                to="/profile"
+                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                <span className="text-sm font-medium">
+                  {user?.given_name || "Profil"}
+                </span>
+                {user?.picture ? (
                   <img
                     src={user.picture}
-                    alt="Foto profile"
-                    className="w-[35px] ml-4 rounded-full"
+                    alt="Foto Profil"
+                    className="w-9 h-9 rounded-full object-cover border border-gray-200"
                   />
-                </span>
+                ) : (
+                  <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+                    {user?.given_name ? user.given_name.charAt(0) : "U"}
+                  </div>
+                )}
               </Link>
-            </div>
-          )}
+            )}
+          </div>
+
+          {/* Mobile hamburger button */}
+          <div className="flex md:hidden items-center">
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none"
+              aria-label="Menu"
+            >
+              <svg
+                className="h-6 w-6"
+                stroke="currentColor"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                {mobileMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
-    </Popover>
+
+      {/* Mobile menu dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-gray-100 bg-white px-4 pt-2 pb-4 space-y-2">
+          <Link
+            to="/kategori"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Kategori
+          </Link>
+          <Link
+            to="/penulis"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Penulis
+          </Link>
+          <div className="pt-2 border-t border-gray-100">
+            {!token ? (
+              <a
+                href={getGoogleAuthUrl()}
+                className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+              >
+                <span>Masuk dengan Google</span>
+                <img
+                  src={logoGoogle}
+                  alt="Google"
+                  className="w-5 h-5 ml-2 bg-white rounded-full p-0.5"
+                />
+              </a>
+            ) : (
+              <Link
+                to="/profile"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center space-x-3 px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md"
+              >
+                {user?.picture && (
+                  <img
+                    src={user.picture}
+                    alt="Foto Profil"
+                    className="w-8 h-8 rounded-full"
+                  />
+                )}
+                <span>{user?.given_name ? `${user.given_name} (Profil)` : "Profil"}</span>
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
+    </nav>
   );
 }
+

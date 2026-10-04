@@ -1,55 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
-import { useState } from "react";
-import Navbar from "../components/navbar.js";
-import { bookmarkPlugin } from '@react-pdf-viewer/bookmark'
 
-export default function Reader() {
+export default function ReaderView({ file = "/sample.pdf" }) {
   const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(3);
+  const [pageNumber, setPageNumber] = useState(1);
 
-  function onDocummentLoadSuccess({ numPages }) {
-    setNumPages(numPages);
-    setPageNumber(pageNumber);
+  function onDocumentLoadSuccess({ numPages: total }) {
+    setNumPages(total);
+    setPageNumber(1);
   }
 
-  function changePage(offSet) {
-    setPageNumber(prevPageNumber => prevPageNumber + offSet);
-  }
-
-  function changePageBack() {
-   changePage(-1);
-  }
-
-  function changePageNext() {
-    changePage(+1);
+  function changePage(offset) {
+    setPageNumber((prev) => {
+      const next = prev + offset;
+      if (next < 1) return 1;
+      if (numPages && next > numPages) return numPages;
+      return next;
+    });
   }
 
   return (
-    <center>
-      <div>
-        <header className="sticky top-0 z-50">
-          <Navbar />
-        </header>
-        <main className="relative">
-          <div className="">
-            <Document file="/sample.pdf" pageNumber={pageNumber} onLoadSuccess={onDocummentLoadSuccess}>
-              {/* {Array.from(new Array(numPages), (el, index) => ( */}
-                <Page height={600} ></Page>
-                <p>Page {pageNumber} of {numPages}</p>
-                {pageNumber > 1 &&
-                <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l" onClick={changePageBack}>Sebelumnya</button>
-                }
-                {
-                  pageNumber < numPages &&
-                  <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r" onClick={changePageNext}>Selanjutnya</button>
-                }
-              {/* ))} */}
-              
-            </Document>
-          </div>
-        </main>
+    <div className="flex flex-col items-center p-4">
+      <div className="shadow-lg border border-gray-200 rounded-lg overflow-hidden bg-white p-2">
+        <Document file={file} onLoadSuccess={onDocumentLoadSuccess}>
+          <Page height={600} pageNumber={pageNumber} />
+        </Document>
       </div>
-    </center>
+
+      <div className="flex items-center space-x-4 mt-4">
+        <button
+          type="button"
+          disabled={pageNumber <= 1}
+          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 text-gray-800 text-sm font-medium rounded-lg"
+          onClick={() => changePage(-1)}
+        >
+          Sebelumnya
+        </button>
+
+        <span className="text-sm font-medium text-gray-700">
+          Halaman {pageNumber} dari {numPages || "..."}
+        </span>
+
+        <button
+          type="button"
+          disabled={Boolean(numPages && pageNumber >= numPages)}
+          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 text-gray-800 text-sm font-medium rounded-lg"
+          onClick={() => changePage(1)}
+        >
+          Selanjutnya
+        </button>
+      </div>
+    </div>
   );
 }
+

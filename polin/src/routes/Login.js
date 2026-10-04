@@ -1,35 +1,49 @@
 import React from "react";
-import {FcGoogle} from 'react-icons/fc';
+import { FcGoogle } from "react-icons/fc";
 import ImgLogin from "../assets/ImgLogin.jpg";
 import logo from "../assets/logo.png";
-
+import { getGoogleAuthUrl } from "../services/api";
 
 const Login = () => {
   return (
-
-      <div className ="grid grid-cols-1 sm:grid-cols-2 h-screen w-full">
-          <div className ="hidden sm:block">
-            <img className="w-full h-full object-cover" src={ImgLogin} alt="" />
-          </div>
- 
-          <div className ="bg-green-200 flex flex-col justify-center">
-              <form className="max-w-[400px] w-full mx-auto bg-gray-50 p-8 px-8 rounded-lg">        
-                
-                <img className ="max-w-[250px] w-full mx-auto p-5 px-10" src={logo} alt=""/>
-                
-                <p className ="text-xl font-normal text-center mb-5">
-                  Silahkan untuk melakukan Login
-                </p>
-               
-                <div className='flex justify-center py-100'>
-                  <button className='border shadow-lg hover:shadow-xl px-6 py-2 relative flex items-center'><FcGoogle className='mr-2' /> Google</button>
-                </div>
-
-              </form>
-          </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 h-screen w-full">
+      <div className="hidden sm:block">
+        <img
+          className="w-full h-full object-cover"
+          src={ImgLogin}
+          alt="Perpustakaan Polin"
+        />
       </div>
-    
+
+      <div className="bg-slate-50 flex flex-col justify-center px-6">
+        <div className="max-w-[400px] w-full mx-auto bg-white p-8 rounded-2xl shadow-lg border border-gray-100 text-center">
+          <img
+            className="max-w-[180px] w-full mx-auto mb-6"
+            src={logo}
+            alt="Polin Logo"
+          />
+
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            Selamat Datang di Polin
+          </h2>
+          <p className="text-sm text-gray-500 mb-8">
+            Masuk dengan akun Google Anda untuk mulai membaca buku digital.
+          </p>
+
+          <div className="flex justify-center">
+            <a
+              href={getGoogleAuthUrl()}
+              className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-xl shadow-sm text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:shadow transition-all"
+            >
+              <FcGoogle className="text-xl mr-3" />
+              <span>Masuk dengan Google</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
 export default Login;
+

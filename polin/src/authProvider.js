@@ -1,96 +1,106 @@
 import axios from "axios";
+import { API_BASE_URL } from "./services/api";
 
-const LOCALSTORAGE_KEYS = {
+export const LOCALSTORAGE_KEYS = {
   accessToken: "accessToken",
   refreshToken: "refreshToken",
   expireTime: "expireTime",
   timestamp: "tokenTimestamp",
 };
 
-const LOCALSTORAGE_VALUES = {
-  accessToken: window.localStorage.getItem(LOCALSTORAGE_KEYS.accessToken),
-  refreshToken: window.localStorage.getItem(LOCALSTORAGE_KEYS.refreshToken),
-  expireTime: window.localStorage.getItem(LOCALSTORAGE_KEYS.expireTime),
-//   timestamp: window.localStorage.getItem(LOCALSTORAGE_KEYS.timestamp),
+export const getStoredToken = () => {
+  const token = window.localStorage.getItem(LOCALSTORAGE_KEYS.accessToken);
+  if (!token || token === "undefined" || token === "null") {
+    return null;
+  }
+  return token;
 };
 
-const hasTokenExpired = () => {
-  const { accessToken, timestamp, expireTime } = LOCALSTORAGE_VALUES;
-  if (!accessToken || !timestamp) {
+export const hasTokenExpired = () => {
+  const token = getStoredToken();
+  const timestamp = window.localStorage.getItem(LOCALSTORAGE_KEYS.timestamp);
+  const expireTime = window.localStorage.getItem(LOCALSTORAGE_KEYS.expireTime);
+
+  if (!token || !timestamp || !expireTime) {
     return false;
   }
-  const millisecondsElapsed = Date.now() - Number(timestamp);
-  return millisecondsElapsed / 1000 > Number(expireTime);
+
+  const secondsElapsed = (Date.now() - Number(timestamp)) / 1000;
+  return secondsElapsed > Number(expireTime);
 };
 
-const refreshToken = async () => {
-  try {
-    if (
-      !LOCALSTORAGE_VALUES.refreshToken ||
-      LOCALSTORAGE_VALUES.refreshToken === "undefined" ||
-      Date.now() - Number(LOCALSTORAGE_VALUES.timestamp) / 1000 < 1000
-    ) {
-      console.error("No refresh token available");
-      logout();
-    }
-    const { data } = await axios.get(
-      `https://api.polin.probolinggokota.go.id/auth/token/renew?refresh_token=${LOCALSTORAGE_VALUES.refreshToken}`
-    );
-
-    window.localStorage.setItem(
-      LOCALSTORAGE_KEYS.accessToken,
-      data.access_token
-    );
-    window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
-
-    window.location.reload();
-  } catch (e) {
-    console.error(e);
+export const refreshToken = async () => {
+  const storedRefreshToken = window.localStorage.getItem(LOCALSTORAGE_KEYS.refreshToken);
+  if (!storedRefreshToken || storedRefreshToken === "undefined" || storedRefreshToken === "null") {
+    console.error("No refresh token available");
+    logout();
+    return null;
   }
+
+  try {
+    const { data } = await axios.get(
+      `${API_BASE_URL}/auth/token/renew?refresh_token=${encodeURIComponent(storedRefreshToken)}`
+    );
+
+    if (data?.access_token) {
+      window.localStorage.setItem(LOCALSTORAGE_KEYS.accessToken, data.access_token);
+      window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now().toString());
+      if (data.expires_in) {
+        window.localStorage.setItem(LOCALSTORAGE_KEYS.expireTime, data.expires_in.toString());
+      }
+      return data.access_token;
+    }
+  } catch (e) {
+    console.error("Failed to refresh token", e);
+    logout();
+  }
+  return null;
 };
 
 export const getAccessToken = () => {
-  const query = window.location.search;
-  const urlParams = new URLSearchParams(query);
-  const queryParams = {
-    [LOCALSTORAGE_KEYS.accessToken]: urlParams.get("access_token"),
-    [LOCALSTORAGE_KEYS.refreshToken]: urlParams.get("refresh_token"),
-    // [LOCALSTORAGE_KEYS.expireTime]: urlParams.get('expires_in'),
-  };
+  if (typeof window === "undefined") return null;
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlAccessToken = urlParams.get("access_token");
+  const urlRefreshToken = urlParams.get("refresh_token");
+  const urlExpiresIn = urlParams.get("expires_in");
   const hasError = urlParams.get("error");
 
-  if (
-    hasError ||
-    hasTokenExpired() ||
-    LOCALSTORAGE_VALUES.accessToken === "undefined"
-  ) {
+  if (urlAccessToken) {
+    window.localStorage.setItem(LOCALSTORAGE_KEYS.accessToken, urlAccessToken);
+    if (urlRefreshToken) {
+      window.localStorage.setItem(LOCALSTORAGE_KEYS.refreshToken, urlRefreshToken);
+    }
+    if (urlExpiresIn) {
+      window.localStorage.setItem(LOCALSTORAGE_KEYS.expireTime, urlExpiresIn);
+    }
+    window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now().toString());
+
+    // Clean up query parameters from URL without full reload
+    const cleanUrl = window.location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
+
+    return urlAccessToken;
+  }
+
+  if (hasError || hasTokenExpired()) {
     refreshToken();
   }
 
-  if (
-    LOCALSTORAGE_VALUES.accessToken &&
-    LOCALSTORAGE_VALUES.accessToken !== "undefined"
-  ) {
-    return LOCALSTORAGE_VALUES.accessToken;
-  }
-
-  if (queryParams[LOCALSTORAGE_KEYS.accessToken]) {
-    for (const property in queryParams) {
-      window.localStorage.setItem(property, queryParams[property]);
-    }
-    window.localStorage.setItem(LOCALSTORAGE_KEYS.timestamp, Date.now());
-    return queryParams[LOCALSTORAGE_KEYS.accessToken];
-  }
-
-  return false;
+  return getStoredToken();
 };
 
 export const logout = () => {
-  for (const property in LOCALSTORAGE_KEYS) {
-    window.localStorage.removeItem(LOCALSTORAGE_KEYS[property]);
-  }
-  window.location = window.location.origin;
+  Object.values(LOCALSTORAGE_KEYS).forEach((key) => {
+    window.localStorage.removeItem(key);
+  });
+  window.location.href = window.location.origin;
 };
 
-export const accessToken = getAccessToken();
+export const isAuthenticated = () => {
+  return Boolean(getStoredToken());
+};
+
+// Backwards compatibility getter export
+export const accessToken = getStoredToken();
+

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import useUsers from "../store/users.js";
 import useBookStore from "../store/BookStore.js";
+import { getAssetUrl } from "../services/api.js";
 
 export default function Books({
   id,
@@ -10,59 +11,82 @@ export default function Books({
   category,
   author,
   permalink,
+  onDelete,
 }) {
-  const { user, fetchUser } = useUsers((state) => state);
-  const { removeBooks } = useBookStore((state) => state)
-  const [isAdmin, setAdmin] = useState(false);
-  const [token, setToken] = useState(null);
+  const { user } = useUsers();
+  const { removeBooks } = useBookStore();
+  const isAdmin = user?.role === "admin";
 
-  useEffect(() => {
-    fetchUser(`${process.env.REACT_APP_API_BASE_URL}/user/profile`);
-    if(user.role == "admin") {
-      setAdmin(true);
+  const handleRemove = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (window.confirm(`Apakah Anda yakin ingin menghapus buku "${title}"?`)) {
+      try {
+        await removeBooks(id);
+        if (onDelete) {
+          onDelete(id);
+        }
+      } catch (err) {
+        alert("Gagal menghapus buku: " + (err.response?.data?.message || err.message));
+      }
     }
-  }, []);
+  };
 
-  const removeBook = () => {
-    removeBooks(id)
-  }
+  const previewUrl = `/preview/${id}${permalink ? `/${permalink}` : ""}`;
+  const updateUrl = `/update/${id}${permalink ? `/${permalink}` : ""}`;
+  const coverImageSrc = getAssetUrl(cover);
 
   return (
-    <div className="max-w-[280px] bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-      <Link to={`/preview/${id}/${permalink}`}>
-        <img className="rounded-t-lg h-[375px] w-[285px]" src={cover} alt="" />
+    <div className="flex flex-col h-full bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden dark:bg-gray-800 dark:border-gray-700">
+      <Link to={previewUrl} className="relative block aspect-[3/4] overflow-hidden bg-gray-100">
+        <img
+          className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105"
+          src={coverImageSrc}
+          alt={`Sampul buku ${title || ""}`}
+          loading="lazy"
+        />
       </Link>
-      <div className="flex justify-center items-end mt-3">
+
+      <div className="flex flex-col flex-1 p-4 justify-between">
+        <div>
+          <Link to={previewUrl}>
+            <h3
+              className="text-base font-semibold text-gray-900 hover:text-blue-600 line-clamp-2 dark:text-white transition-colors"
+              title={title}
+            >
+              {title}
+            </h3>
+          </Link>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Penulis: <span className="text-gray-700 dark:text-gray-300 font-medium">{author || "-"}</span>
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+            Kategori:{" "}
+            <span className="inline-block px-2 py-0.5 text-[11px] font-medium bg-blue-50 text-blue-700 rounded-full dark:bg-blue-900/30 dark:text-blue-300">
+              {Array.isArray(category) ? category.join(", ") : category || "-"}
+            </span>
+          </p>
+        </div>
+
         {isAdmin && (
-          <React.Fragment>
-            <Link to={`/update/${id}/${permalink}`}>
-              <button className="inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
-                <span className="px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-                  Edit
-                </span>
-              </button>
+          <div className="flex items-center space-x-2 pt-3 mt-3 border-t border-gray-100 dark:border-gray-700">
+            <Link
+              to={updateUrl}
+              className="flex-1 text-center px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+            >
+              Edit
             </Link>
-            
-              <button onClick={removeBook} className="inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800">
-                <span className="px-4 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-                  Hapus
-                </span>
-              </button>
-            
-          </React.Fragment>
+            <button
+              type="button"
+              onClick={handleRemove}
+              className="flex-1 text-center px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+            >
+              Hapus
+            </button>
+          </div>
         )}
-      </div>
-      <div className="px-5 pt-1 pb-4">
-        <Link to={`/preview/${id}/${permalink}`}>
-          <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-            {title}
-          </h5>
-        </Link>
-        <p className="text-gray-700 dark:text-gray-400">Penulis : {author}</p>
-        <p className="text-gray-700 dark:text-gray-400">
-          Kategori : {category + " "}
-        </p>
       </div>
     </div>
   );
 }
+

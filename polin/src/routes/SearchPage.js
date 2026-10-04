@@ -1,64 +1,94 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/navbar.js";
 import Footer from "../components/footer.js";
 import Books from "../components/books.js";
-import Kategori from "../components/category.js";
-import axios from "axios";
 import { useParams } from "react-router-dom";
+import { booksApi } from "../services/api.js";
 
 const SearchPage = () => {
   const [data, setData] = useState([]);
-  const type = useParams();
-
-  const fetchData = async () => {
-    const url = `${process.env.REACT_APP_API_BASE_URL}/books/search?type=${type.type}&term=${type.name}`
-    const res = await axios.get(url);
-    setData(res.data);
-  };
+  const [loading, setLoading] = useState(true);
+  const { type = "title", name = "" } = useParams();
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await booksApi.search(type, decodeURIComponent(name));
+        setData(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error("Gagal melakukan pencarian:", err);
+        setData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchData();
-  }, []);
+  }, [type, name]);
+
+  const handleDeleteBook = (deletedId) => {
+    setData((prev) => prev.filter((b) => b.id !== deletedId));
+  };
+
+  const getSearchTitle = () => {
+    const decoded = decodeURIComponent(name);
+    if (type === "category") return `Kategori: "${decoded}"`;
+    if (type === "author") return `Penulis: "${decoded}"`;
+    return `Pencarian: "${decoded}"`;
+  };
 
   return (
-    <div className="flex flex-col h-screen justify-between">
-      <header className="h-10 bg-red-500">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+      <div className="sticky top-0 z-40 bg-white shadow-sm">
         <Navbar />
-      </header>
-      <main className="mt-[80px] mb-auto">
-        <div className="flex justify-center mb-5">
-          <a className=" text-xl text-slate-500 font-sans">Hasil</a>
+      </div>
+
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+            Hasil {name ? getSearchTitle() : "Pencarian"}
+          </h1>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            Ditemukan {data.length} buku
+          </p>
         </div>
-        <div className="flex justify-center">
-          <div
-            className="grid grid-cols-2 gap-4 px-5 md:grid-cols-2 md:gap-4 
-          lg:grid-cols-3 lg:gap-6 xl:grid-cols-4"
-          >
-            {data.map((element, index) => {
-              return (
-                <Books
-                  key={index}
-                  id={element.id}
-                  cover={
-                    "https://api.polin.probolinggokota.go.id" +
-                    element.cover_url
-                  }
-                  title={element.title}
-                  category={element.categories}
-                  author={element.author}
-                  permalink={element.permalink}
-                />
-              );
-            })}
+
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
           </div>
-        </div>
+        ) : data.length === 0 ? (
+          <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 max-w-md mx-auto p-8">
+            <p className="text-gray-600 dark:text-gray-400 font-medium">
+              Tidak ada buku yang cocok dengan pencarian Anda.
+            </p>
+            <p className="text-xs text-gray-400 mt-2">
+              Coba kata kunci lain atau periksa kembali ejaan Anda.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {data.map((element) => (
+              <Books
+                key={element.id}
+                id={element.id}
+                cover={element.cover_url}
+                title={element.title}
+                category={element.categories}
+                author={element.author}
+                permalink={element.permalink}
+                onDelete={handleDeleteBook}
+              />
+            ))}
+          </div>
+        )}
       </main>
-      <footer className="mt-7">
+
       <Footer />
-      </footer>
     </div>
   );
 };
 
 export default SearchPage;
+

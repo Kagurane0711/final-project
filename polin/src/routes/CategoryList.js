@@ -1,53 +1,64 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/navbar.js";
 import Footer from "../components/footer.js";
-import Kategori from "../components/category.js";
-import axios from "axios";
+import CategoryCard from "../components/category.js";
+import { booksApi } from "../services/api.js";
 
-import { useParams } from "react-router-dom";
-
-const Category = () => {
-  const [category, setCategory] = useState([]);
-
-  const fetchCategories = async () => {
-    const res = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/books/categories`
-    );
-    setCategory(res.data);
-  };
+const CategoryList = () => {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const res = await booksApi.getCategories();
+        setCategories(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error("Gagal memuat kategori:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchCategories();
   }, []);
 
   return (
-    <div className="flex flex-col h-screen justify-between">
-      <header className="h-10 bg-red-500">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+      <div className="sticky top-0 z-40 bg-white shadow-sm">
         <Navbar />
-      </header>
-      <main className="mt-[80px] mb-auto">
-        <div className="flex justify-center">
-          <a className=" text-xl text-slate-500 font-sans">Kategori</a>
+      </div>
+
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Daftar Kategori
+          </h1>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            Temukan buku berdasarkan topik dan genre yang Anda minati
+          </p>
         </div>
 
-        <div className="flex justify-center">
-          <div
-            className="grid grid-cols-2 gap-4 px-5 md:grid-cols-3 md:gap-6 
-          lg:grid-cols-3 lg:gap-6 xl:grid-cols-4"
-          >
-            {category.map((element, index) => {
-              return (
-                <Kategori
-                  key={index}
-                  id={element.id}
-                  name={element.name}
-                  count={element.count}
-                />
-              );
-            })}
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
           </div>
-        </div>
+        ) : categories.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-gray-500">Tidak ada kategori ditemukan.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
+            {categories.map((cat, index) => (
+              <CategoryCard
+                key={cat.id || index}
+                name={cat.name || cat}
+                count={cat.count}
+              />
+            ))}
+          </div>
+        )}
       </main>
 
       <Footer />
@@ -55,4 +66,5 @@ const Category = () => {
   );
 };
 
-export default Category;
+export default CategoryList;
+
