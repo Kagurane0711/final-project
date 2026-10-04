@@ -1,57 +1,70 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/navbar.js";
 import Footer from "../components/footer.js";
-import Penulis from "../components/author.js";
-import axios from "axios";
+import AuthorCard from "../components/author.js";
+import { booksApi } from "../services/api.js";
 
-const Author = () => {
-  const [author, setAuthors] = useState([]);
-
-  const fetchAuthors = async () => {
-    const res = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/books/authors`
-    );
-    setAuthors(res.data);
-  };
+const AuthorList = () => {
+  const [authors, setAuthors] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchAuthors = async () => {
+      try {
+        setLoading(true);
+        const res = await booksApi.getAuthors();
+        setAuthors(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error("Gagal memuat penulis:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchAuthors();
   }, []);
 
   return (
-    <div className="flex flex-col h-screen justify-between">
-      <header className="h-10 bg-red-500">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+      <div className="sticky top-0 z-40 bg-white shadow-sm">
         <Navbar />
-      </header>
-      <main className="mt-[80px] mb-auto">
-        <div className="flex justify-center">
-          <a className=" text-xl text-slate-500 font-sans">Penulis</a>
+      </div>
+
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Daftar Penulis
+          </h1>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            Jelajahi karya-karya dari berbagai penulis ternama
+          </p>
         </div>
-        <div className="flex justify-center">
-          <div
-            className="grid grid-cols-2 gap-4 px-5 md:grid-cols-2 md:gap-4 
-          lg:grid-cols-3 lg:gap-6 xl:grid-cols-4"
-          >
-            {author.map((element, index) => {
-              return (
-                <Penulis
-                  key={index}
-                  id={element.id}
-                  name={element.name}
-                  count={element.count}
-                />
-              );
-            })}
+
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
           </div>
-        </div>
+        ) : authors.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-gray-500">Tidak ada penulis ditemukan.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
+            {authors.map((element, index) => (
+              <AuthorCard
+                key={element.id || index}
+                name={element.name || element}
+                count={element.count}
+              />
+            ))}
+          </div>
+        )}
       </main>
-      <footer className="mt-3">
-        <Footer />
-      </footer>
+
+      <Footer />
     </div>
   );
-
 };
 
-export default Author;
+export default AuthorList;
+

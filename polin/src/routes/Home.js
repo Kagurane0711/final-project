@@ -1,150 +1,157 @@
-import React from "react";
-import "../styles/home.css";
-import { useState, useEffect } from "react";
-import useBookStore from "../store/BookStore.js";
+import React, { useState, useEffect, useCallback } from "react";
 import Navbar from "../components/navbar.js";
 import Books from "../components/books.js";
 import Footer from "../components/footer.js";
-import { useNavigate } from "react-router";
 import InfiniteScroll from "react-infinite-scroll-component";
-import axios from "axios";
-import useUsers from "../store/users.js";
-import { accessToken } from "../authProvider.js";
+import { getAccessToken } from "../authProvider.js";
+import { booksApi, getGoogleAuthUrl } from "../services/api.js";
 
 const Home = () => {
-  const [token, setToken] = useState(null);
-  const { books, fetchBook } = useBookStore((state) => state);
-  const { user, fetchUser } = useUsers((state) => state);
+  const [token, setToken] = useState(() => getAccessToken());
   const [items, setItems] = useState([]);
-  const navigate = useNavigate();
   const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(true);
 
+  // Initial load
   useEffect(() => {
-    // fetchBook(`${process.env.REACT_APP_API_BASE_URL}/books?page_id=0&limit=12`)
-    const getBook = async () => {
-      const url = `${process.env.REACT_APP_API_BASE_URL}/books?page_id=0&limit=12`;
-      const book = await axios.get(url);
-      setItems(book.data);
+    setToken(getAccessToken());
+    const loadInitialBooks = async () => {
+      try {
+        setLoading(true);
+        const res = await booksApi.getAll(0, 12);
+        const initialBooks = Array.isArray(res.data) ? res.data : [];
+        setItems(initialBooks);
+        if (initialBooks.length < 12) {
+          setHasMore(false);
+        }
+        setPage(1);
+      } catch (err) {
+        console.error("Gagal memuat buku:", err);
+      } finally {
+        setLoading(false);
+      }
     };
-    getBook();
-    setToken(accessToken);
 
-    setItems([...items].sort((a, b) => a.id - b.id));
+    loadInitialBooks();
   }, []);
 
-  const fetchBooks = async () => {
-    const res = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/books?page_id=${page}&limit=12`
-    );
-    return res;
-  };
-
-  const fetchData = async () => {
+  const fetchMoreData = useCallback(async () => {
     try {
-      setHasMore(false);
-      const newBook = await fetchBooks();
-      setItems([...items, ...newBook.data]);
-      if (items.length === 0 || newBook.length < 12) {
+      const res = await booksApi.getAll(page, 12);
+      const newBooks = Array.isArray(res.data) ? res.data : [];
+
+      if (newBooks.length === 0) {
+        setHasMore(false);
+        return;
+      }
+
+      setItems((prev) => {
+        // Prevent duplicate books if page indices overlap
+        const existingIds = new Set(prev.map((b) => b.id));
+        const filteredNew = newBooks.filter((b) => !existingIds.has(b.id));
+        return [...prev, ...filteredNew];
+      });
+
+      if (newBooks.length < 12) {
         setHasMore(false);
       }
-      setPage(page + 1);
+
+      setPage((prevPage) => prevPage + 1);
     } catch (err) {
-      console.error(err);
+      console.error("Gagal memuat buku tambahan:", err);
+      setHasMore(false);
     }
+  }, [page]);
+
+  const handleDeleteBook = (deletedId) => {
+    setItems((prev) => prev.filter((b) => b.id !== deletedId));
   };
 
+  const renderBookGrid = () => (
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4">
+      {items.map((element) => (
+        <Books
+          key={element.id}
+          id={element.id}
+          cover={element.cover_url}
+          title={element.title}
+          category={element.categories}
+          author={element.author}
+          permalink={element.permalink}
+          onDelete={handleDeleteBook}
+        />
+      ))}
+    </div>
+  );
+
   return (
-    <div>
-      <div className="fixed w-full">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+      <div className="sticky top-0 z-40 bg-white shadow-sm">
         <Navbar />
       </div>
-      <div className="">
-        <div className="flex justify-center ">
-          <p className="text-2xl font-sans mt-[130px] mb-6">
-            Buku-buku terbaru
+
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+            Buku-Buku Terbaru
+          </h1>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            Jelajahi berbagai koleksi buku digital terbaru di Polin
           </p>
         </div>
 
-        {!token && (
-          <div className="flex justify-center ">
-            <div
-              className="grid grid-cols-2 gap-4 px-5 md:grid-cols-2 md:gap-4 
-          lg:grid-cols-3 lg:gap-6 xl:grid-cols-4"
-            >
-              {items.map((element, index) => {
-                return (
-                  <Books
-                    key={index}
-                    id={element.id}
-                    cover={
-                      `${process.env.REACT_APP_API_BASE_URL}` +
-                      element.cover_url
-                    }
-                    title={element.title}
-                    category={element.categories}
-                    author={element.author}
-                    permalink={element.permalink}
-                  />
-                );
-              })}
-              <div className="sm:col-span-2 md:col-span-2 lg:col-span-3 xl:col-span-4">
-                <a
-                  href={
-                    process.env.REACT_APP_API_BASE_URL +
-                    "/auth/google?redirect=" +
-                    process.env.REACT_APP_API_REDIRECT_URL
-                  }
-                >
-                  <p className="text-center text-xl text-slate-500 font-sans my-6">
-                    Masuk untuk melihat lebih banyak
-                  </p>
-                </a>
-              </div>
+        {loading && items.length === 0 ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+          </div>
+        ) : items.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-gray-500 text-lg">Belum ada buku tersedia.</p>
+          </div>
+        ) : !token ? (
+          <div>
+            {renderBookGrid()}
+            <div className="mt-12 text-center bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 max-w-md mx-auto">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+                Ingin membaca lebih banyak?
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                Masuk dengan akun Google Anda untuk mengakses seluruh koleksi dan fitur favorit.
+              </p>
+              <a
+                href={getGoogleAuthUrl()}
+                className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md transition-colors"
+              >
+                Masuk dengan Google
+              </a>
             </div>
           </div>
-        )}
-        {token && (
+        ) : (
           <InfiniteScroll
             dataLength={items.length}
-            next={fetchData}
+            next={fetchMoreData}
             hasMore={hasMore}
-            loader={<h4>Loading...</h4>}
+            loader={
+              <div className="flex justify-center my-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            }
             endMessage={
-              <p className="my-5" style={{ textAlign: "center" }}>
-                <b>Semua buku telah ditampilkan!</b>
+              <p className="my-8 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
+                Semua buku telah ditampilkan!
               </p>
             }
           >
-            <div className="flex justify-center ">
-              <div
-                className="grid grid-cols-2 gap-4 px-5 md:grid-cols-2 md:gap-4 
-              lg:grid-cols-3 lg:gap-6 xl:grid-cols-4"
-              >
-                {items.map((element, index) => {
-                  return (
-                    <Books
-                      key={index}
-                      id={element.id}
-                      cover={
-                        `${process.env.REACT_APP_API_BASE_URL}` +
-                        element.cover_url
-                      }
-                      title={element.title}
-                      category={element.categories}
-                      author={element.author}
-                      permalink={element.permalink}
-                    />
-                  );
-                })}
-              </div>
-            </div>
+            {renderBookGrid()}
           </InfiniteScroll>
         )}
-      </div>
+      </main>
+
       <Footer />
     </div>
   );
 };
 
 export default Home;
+

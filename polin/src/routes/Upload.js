@@ -1,270 +1,307 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar.js";
 import Footer from "../components/footer.js";
-import axios, { post } from "axios";
-import FormData from "form-data";
-import { useForm } from "react-hook-form";
-import useUsers from "../store/users.js";
+import { booksApi } from "../services/api.js";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Upload = () => {
-  // const [formValues, setFormValues] = useState({});
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [year, setYear] = useState("");
-  const [isbn, setIsbn] = useState("-");
-  const [description, setDescription] = useState("-");
+  const [isbn, setIsbn] = useState("");
   const [summary, setSummary] = useState("");
-  const [publisher_id, setPublisher] = useState("ebook");
-  const [author_id, setAuthor] = useState(1);
-  const [category_ids, setCategory] = useState([1]);
-  const [book, setBook] = useState(null);
-  const [cover_image, setCoverImage] = useState(null);
-  const { changeRole } = useUsers((state) => state);
+  const [authorId, setAuthorId] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [bookFile, setBookFile] = useState(null);
+  const [coverImage, setCoverImage] = useState(null);
+
+  const [authors, setAuthors] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      try {
+        const [authorsRes, categoriesRes] = await Promise.all([
+          booksApi.getAuthors(),
+          booksApi.getCategories(),
+        ]);
+
+        if (Array.isArray(authorsRes.data)) {
+          setAuthors(authorsRes.data);
+          if (authorsRes.data.length > 0) {
+            setAuthorId(authorsRes.data[0].id);
+          }
+        }
+        if (Array.isArray(categoriesRes.data)) {
+          setCategories(categoriesRes.data);
+          if (categoriesRes.data.length > 0) {
+            setCategoryId(categoriesRes.data[0].id);
+          }
+        }
+      } catch (err) {
+        console.error("Gagal memuat metadata buku:", err);
+      }
+    };
+
+    fetchMetadata();
+  }, []);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const formFile = new FormData();
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("year", year);
-    formData.append("isbn", isbn);
-    formData.append("description", description);
-    formData.append("summary", summary);
-    formData.append("publisher_id", publisher_id);
-    formData.append("author_id", author_id);
-    formData.append("category_ids", category_ids);
-    formFile.append("cover_image", cover_image);
-    formFile.append("book", book);
 
-    const response = await axios({
-      method: "post",
-      url: `${process.env.REACT_APP_API_BASE_URL}/admin/books/add`,
-      data: formFile,
-      data: JSON.stringify(formData),
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
-        "Content-type": `multipart/form-data`, 
-        boundary: `--0cc175b9c0f1b6a831c399e269772661`,
-        // "Content-Disposition": "form-data",
-        // name: "body",
-        // "Content-type": "application/octet-stream",
-      },
-    });
-    // await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/books/add`),
-    //   formData,
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-    //       "Content-type": `multipart/form-data`,
-    //       // boundary: `--0cc175b9c0f1b6a831c399e269772661`,
-    //     },
-    //   };
-  };
+    if (!title.trim()) {
+      toast.warn("Judul buku wajib diisi.");
+      return;
+    }
 
-  // const handleFormSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const formFile = new FormData();
-  //   formFile.append("cover_image", cover_image);
-  //   formFile.append("book", book);
+    if (!coverImage) {
+      toast.warn("File cover buku wajib dipilih.");
+      return;
+    }
 
-  //   fetch(`${process.env.REACT_APP_API_BASE_URL}/admin/books/add`), {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "multipart/form-data boundary=--0cc175b9c0f1b6a831c399e269772661"
-  //       + "content-Disposition: form-data" + "Content-type: application/json"
-  //     }
-  //   }
+    if (!bookFile) {
+      toast.warn("File PDF buku wajib dipilih.");
+      return;
+    }
 
-  // await axios({
-  //   method: "post",
-  //   url: `${process.env.REACT_APP_API_BASE_URL}/admin/books/add`,
-  //   body: formFile,
-  //   // data: JSON.stringify(formData),
-  //   headers: {
-  //     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-  //     "Content-type": "multipart/form-data",
-  //     boundary: "--0cc175b9c0f1b6a831c399e269772661",
-  //     // "Content-Disposition": "form-data",
-  //     // name: "body",
-  //     // "Content-type": "application/octet-stream",
-  //   },
-  // });
-  // };
+    setSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append("title", title.trim());
+      formData.append("year", year);
+      formData.append("isbn", isbn || "-");
+      formData.append("description", summary || "-");
+      formData.append("summary", summary || "-");
+      formData.append("publisher_id", "ebook");
+      formData.append("author_id", authorId);
+      formData.append("category_ids", categoryId);
+      formData.append("cover_image", coverImage);
+      formData.append("book", bookFile);
 
-  const handleCover = (cover) => {
-    setCoverImage(cover);
-  };
-
-  const handleBook = (book) => {
-    setBook(book);
+      await booksApi.add(formData);
+      toast.success("Buku berhasil diupload!");
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    } catch (err) {
+      console.error("Gagal upload buku:", err);
+      toast.error(
+        "Gagal mengunggah buku: " + (err.response?.data?.message || err.message)
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <div>
-      <div className="fixed w-full">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+      <div className="sticky top-0 z-40 bg-white shadow-sm">
         <Navbar />
       </div>
-      <div className="flex flex-col h-screen justify-between">
-        <main className="mb-auto mt-[100px] h-10">
-          <div className="mt-10 sm:mt-0">
-            <div className="flex justify-center ">
-              <a href="#" className="text-xl text-slate-600 font-sans my-4">
-                Upload Buku
-              </a>
-            </div>
-            <div className="flex justify-center">
-              <div className="flex justify-center mt-5 md:mt-0 md:col-span-2">
-                <form onSubmit={handleFormSubmit}>
-                  <div className="shadow overflow-hidden sm:rounded-md">
-                    <div className="px-4 py-5 bg-gray-300 sm:p-6">
-                      <div className="grid grid-cols-2 gap-6 h-[370px] w-[500px]">
-                        <div className="col-span-1 ">
-                          <label
-                            htmlFor="title"
-                            className="block text-sm font-medium text-gray-700"
-                          >
-                            Judul
-                          </label>
-                          <input
-                            type="text"
-                            name="title"
-                            id="title"
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                        <div className="col-span-1 ">
-                          <label
-                            htmlFor="author"
-                            className="block text-sm font-medium text-gray-700"
-                          >
-                            Penulis
-                          </label>
-                          <select
-                            type="text"
-                            name="author_id"
-                            id="author_id"
-                            onChange={(e) => setAuthor(e.target.value)}
-                            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                          >
-                            <option value={1}>George Orwell</option>
-                            <option value={2}>Charles Dickens</option>
-                            <option value={3}>Lewis Caroll</option>
-                            <option value={4}>Bram Stroker</option>
-                            <option value={5}>Jane Austen</option>
-                            <option value={6}>Charlotte Bronte</option>
-                            <option value={7}>Sir Arthur Conan Dolye</option>
-                            <option value={8}>Alexandre Dumas</option>
-                            <option value={9}>H. G. Wells</option>
-                            <option value={10}>Ngatmin Abbas</option>
-                            <option value={11}>Sulistyowati</option>
-                            <option value={12}>Budi Aryanto</option>
-                          </select>
-                        </div>
-                        <div className="col-span-1 ">
-                          <label
-                            htmlFor="year"
-                            className="block text-sm font-medium text-gray-700"
-                          >
-                            Tahun terbit
-                          </label>
-                          <input
-                            type="text"
-                            name="year"
-                            id="year"
-                            onChange={(e) => setYear(e.target.value)}
-                            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                        <div className="col-span-1 ">
-                          <label
-                            htmlFor="category_ids"
-                            className="block text-sm font-medium text-gray-700"
-                          >
-                            Kategori
-                          </label>
-                          <select
-                            name="category_ids"
-                            id="category_ids"
-                            onChange={(e) => setCategory(e.target.value)}
-                            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                          >
-                            <option value={1}>Pendidikan</option>
-                            <option value={2}>Klasik</option>
-                            <option value={3}>Fiksi</option>
-                            <option value={4}>Misteri</option>
-                            <option value={5}>Fiksi Ilmiah</option>
-                            <option value={6}>Fantasi</option>
-                            <option value={7}>horor</option>
-                            <option value={8}>Romansa</option>
-                          </select>
-                        </div>
-                        <div className="col-span-2 ">
-                          <label
-                            htmlFor="summary"
-                            className="block text-sm font-medium text-gray-700"
-                          >
-                            Sinopsis
-                          </label>
-                          <textarea
-                            type="text"
-                            name="sinopsis"
-                            id="sinopsis"
-                            onChange={(e) => setSummary(e.target.value)}
-                            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                        <div className="col-span-2">
-                          <label
-                            htmlFor="cover_img"
-                            className="block text-sm font-medium text-gray-700"
-                          >
-                            Cover
-                          </label>
-                          <input
-                            type="file"
-                            name="cover_image"
-                            id="cover_image"
-                            onChange={(e) => handleCover(e.target.value[0])}
-                            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                        <div className="col-span-2">
-                          <label
-                            htmlFor="book"
-                            className="block text-sm font-medium text-gray-700"
-                          >
-                            Buku
-                          </label>
-                          <input
-                            type="file"
-                            name="book"
-                            id="book"
-                            onChange={(e) => handleBook(e.target.value[0])}
-                            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                      <input
-                        type="submit"
-                        value="Submit"
-                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      />
-                    </div>
-                  </div>
-                </form>
+
+      <ToastContainer position="top-center" autoClose={3000} />
+
+      <main className="flex-1 max-w-3xl w-full mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+            Upload Buku Baru
+          </h1>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            Tambahkan buku digital baru ke dalam koleksi perpustakaan Polin
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 sm:p-8">
+          <form onSubmit={handleFormSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {/* Judul */}
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="title"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Judul Buku <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="title"
+                  id="title"
+                  required
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Contoh: Belajar Pemrograman Web"
+                  className="w-full px-4 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+
+              {/* Penulis */}
+              <div>
+                <label
+                  htmlFor="author_id"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Penulis
+                </label>
+                <select
+                  name="author_id"
+                  id="author_id"
+                  value={authorId}
+                  onChange={(e) => setAuthorId(e.target.value)}
+                  className="w-full px-4 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                >
+                  {authors.length > 0 ? (
+                    authors.map((auth) => (
+                      <option key={auth.id} value={auth.id}>
+                        {auth.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="1">Penulis Default</option>
+                  )}
+                </select>
+              </div>
+
+              {/* Kategori */}
+              <div>
+                <label
+                  htmlFor="category_ids"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Kategori
+                </label>
+                <select
+                  name="category_ids"
+                  id="category_ids"
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value)}
+                  className="w-full px-4 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                >
+                  {categories.length > 0 ? (
+                    categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="1">Pendidikan</option>
+                  )}
+                </select>
+              </div>
+
+              {/* Tahun Terbit */}
+              <div>
+                <label
+                  htmlFor="year"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Tahun Terbit
+                </label>
+                <input
+                  type="text"
+                  name="year"
+                  id="year"
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                  placeholder="Contoh: 2023"
+                  className="w-full px-4 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+
+              {/* ISBN */}
+              <div>
+                <label
+                  htmlFor="isbn"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  ISBN
+                </label>
+                <input
+                  type="text"
+                  name="isbn"
+                  id="isbn"
+                  value={isbn}
+                  onChange={(e) => setIsbn(e.target.value)}
+                  placeholder="Contoh: 978-602-xxx-x"
+                  className="w-full px-4 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+
+              {/* Sinopsis */}
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="sinopsis"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  Sinopsis / Deskripsi
+                </label>
+                <textarea
+                  name="sinopsis"
+                  id="sinopsis"
+                  rows={4}
+                  value={summary}
+                  onChange={(e) => setSummary(e.target.value)}
+                  placeholder="Tulis ringkasan singkat isi buku..."
+                  className="w-full px-4 py-2 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+
+              {/* Cover File */}
+              <div>
+                <label
+                  htmlFor="cover_image"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  File Cover (JPG/PNG) <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="file"
+                  name="cover_image"
+                  id="cover_image"
+                  accept="image/*"
+                  onChange={(e) => setCoverImage(e.target.files?.[0] || null)}
+                  className="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+              </div>
+
+              {/* Book File */}
+              <div>
+                <label
+                  htmlFor="book"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >
+                  File Buku (PDF) <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="file"
+                  name="book"
+                  id="book"
+                  accept="application/pdf"
+                  onChange={(e) => setBookFile(e.target.files?.[0] || null)}
+                  className="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
               </div>
             </div>
-          </div>
-        </main>
-        <footer className="h-19">
-          <Footer />
-        </footer>
-      </div>
+
+            <div className="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-end">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="inline-flex items-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-xl shadow-sm transition-colors disabled:opacity-50"
+              >
+                {submitting ? "Mengunggah..." : "Simpan Buku"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };
 
 export default Upload;
+
